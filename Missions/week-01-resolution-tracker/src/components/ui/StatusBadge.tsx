@@ -5,22 +5,22 @@ interface StatusBadgeProps {
   className?: string;
 }
 
-const statusConfig: Record<Mission['status'], { label: string; className: string }> = {
+const statusConfig: Record<Mission['status'], { label: string; classes: string }> = {
   not_started: {
-    label: 'Not Started',
-    className: 'bg-slate-100 text-slate-700',
+    label: 'NOT STARTED',
+    classes: 'bg-slate-100 text-slate-700',
   },
   in_progress: {
-    label: 'In Progress',
-    className: 'bg-amber-100 text-amber-700',
+    label: 'IN PROGRESS',
+    classes: 'bg-orange-100 text-orange-700',
   },
   completed: {
-    label: 'Completed',
-    className: 'bg-emerald-100 text-emerald-700',
+    label: 'COMPLETED',
+    classes: 'bg-emerald-100 text-emerald-700',
   },
   blocked: {
-    label: 'Blocked',
-    className: 'bg-red-100 text-red-700',
+    label: 'BLOCKED',
+    classes: 'bg-red-100 text-red-700',
   },
 };
 
@@ -30,8 +30,8 @@ export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
   return (
     <span
       className={`
-        inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-        ${config.className}
+        inline-flex items-center rounded px-2 py-1 text-xs font-semibold uppercase
+        ${config.classes}
         ${className}
       `}
       aria-label={`Status: ${config.label}`}

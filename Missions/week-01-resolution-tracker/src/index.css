@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   :root {
@@ -11,13 +9,20 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #f6f6f8;
+    color: #0f172a;
   }
 
   body {
     margin: 0;
     min-width: 320px;
     min-height: 100vh;
-    background-color: #f8fafc; /* bg-slate-50 */
-    color: #0f172a; /* text-slate-900 */
+    background-color: #f6f6f8;
+    color: #0f172a;
+  }
+
+  ::selection {
+    background-color: rgba(79, 68, 233, 0.2);
+    color: inherit;
   }
 }

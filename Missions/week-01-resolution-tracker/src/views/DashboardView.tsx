@@ -1,13 +1,12 @@
 import { useState, useMemo } from 'react';
-import { Plus, Search, Filter, TrendingUp, CheckCircle, Clock, AlertCircle, Archive } from 'lucide-react';
+import { Plus, Filter, TrendingUp, CheckCircle, Archive, Sparkles } from 'lucide-react';
 import type { Mission } from '../types';
 import { useMissionStore, useMissionStats } from '../store/missionStore';
 import { MissionCard } from '../components/Shared/MissionCard';
 
 export function DashboardView() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<Mission['status'] | 'all'>('all');
-  const [showFilters, setShowFilters] = useState(false);
+  const [searchQuery] = useState('');
+  const [statusFilter] = useState<Mission['status'] | 'all'>('all');
 
   const {
     missions,
@@ -19,8 +18,30 @@ export function DashboardView() {
   } = useMissionStore();
   
   const stats = useMissionStats();
+  const statCards = [
+    {
+      label: 'Total Missions',
+      value: stats.total,
+      icon: Archive,
+      bgColor: 'bg-indigo-100',
+      iconColor: 'text-indigo-600',
+    },
+    {
+      label: 'In Progress',
+      value: stats.inProgress,
+      icon: TrendingUp,
+      bgColor: 'bg-orange-100',
+      iconColor: 'text-orange-600',
+    },
+    {
+      label: 'Completed',
+      value: stats.completed,
+      icon: CheckCircle,
+      bgColor: 'bg-emerald-100',
+      iconColor: 'text-emerald-600',
+    },
+  ];
 
-  // Filter missions based on search and status
   const filteredMissions = useMemo(() => {
     return missions.filter((mission) => {
       const matchesSearch = searchQuery === '' || 
@@ -61,252 +82,89 @@ export function DashboardView() {
     return progressUpdates[missionId]?.length || 0;
   };
 
-  const statusOptions = [
-    { value: 'all', label: 'All Missions', icon: Archive },
-    { value: 'not_started', label: 'Not Started', icon: Clock },
-    { value: 'in_progress', label: 'In Progress', icon: TrendingUp },
-    { value: 'completed', label: 'Completed', icon: CheckCircle },
-    { value: 'blocked', label: 'Blocked', icon: AlertCircle },
-  ];
-
-  const currentStatusOption = statusOptions.find(option => option.value === statusFilter);
-
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <header className="sticky top-0 z-20 bg-white border-b border-slate-200 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600 text-white">
+                <Sparkles className="h-5 w-5" />
+              </div>
+              <h1 className="text-xl font-bold text-slate-900">
                 AI Resolution Tracker
               </h1>
-              <p className="mt-1 text-sm text-slate-600">
-                Track your progress and achieve your goals
-              </p>
             </div>
-            <button
-              onClick={handleCreateMission}
-              className="
-                bg-indigo-600 text-white px-4 py-2 rounded-md
-                hover:bg-indigo-700 transition-colors
-                flex items-center gap-2 font-medium
-              "
-            >
-              <Plus className="w-4 h-4" />
-              New Mission
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleCreateMission}
+                className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                New Mission
+              </button>
+              <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Total Missions</p>
-                <p className="text-2xl font-bold text-slate-900">{stats.total}</p>
-              </div>
-              <div className="p-2 bg-slate-100 rounded-lg">
-                <Archive className="w-5 h-5 text-slate-600" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">In Progress</p>
-                <p className="text-2xl font-bold text-indigo-600">{stats.inProgress}</p>
-              </div>
-              <div className="p-2 bg-indigo-100 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-indigo-600" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {statCards.map(({ label, value, icon: Icon, bgColor, iconColor }) => (
+            <div
+              key={label}
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p className="text-sm font-medium text-slate-500 mb-1">{label}</p>
+                  <p className="text-4xl font-bold text-slate-900">{value}</p>
+                </div>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${bgColor}`}>
+                  <Icon className={`h-6 w-6 ${iconColor}`} />
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Completed</p>
-                <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
-              </div>
-              <div className="p-2 bg-green-100 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-green-600" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Blocked</p>
-                <p className="text-2xl font-bold text-red-600">{stats.blocked}</p>
-              </div>
-              <div className="p-2 bg-red-100 rounded-lg">
-                <AlertCircle className="w-5 h-5 text-red-600" />
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
 
-        {/* Search and Filters */}
-        <div className="bg-white border border-slate-200 rounded-lg p-4 mb-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Search missions..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="
-                    w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md
-                    focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-                  "
-                />
-              </div>
-            </div>
-
-            {/* Filter Toggle */}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="
-                flex items-center gap-2 px-4 py-2 border border-slate-300 rounded-md
-                hover:bg-slate-50 transition-colors font-medium
-              "
-            >
-              <Filter className="w-4 h-4" />
-              Filters
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-slate-900">Active Missions</h2>
+          <div className="flex items-center gap-2">
+            <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+              <Filter className="h-5 w-5" />
+            </button>
+            <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
             </button>
           </div>
-
-          {statusFilter !== 'all' && (
-            <div className="mt-4 flex items-center gap-2 flex-wrap">
-              <span className="text-sm text-slate-600">Active filters:</span>
-              <button
-                onClick={() => setStatusFilter('all')}
-                className="
-                  inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium
-                  bg-indigo-100 text-indigo-700 border border-indigo-200
-                "
-              >
-                <span className="capitalize">{statusFilter.replace('_', ' ')}</span>
-                <span className="text-xs uppercase">Clear</span>
-              </button>
-            </div>
-          )}
-
-          {/* Filter Options */}
-          {showFilters && (
-            <div className="mt-4 pt-4 border-t border-slate-200">
-              <div className="flex flex-wrap gap-2">
-                {statusOptions.map((option) => {
-                  const Icon = option.icon;
-                  const isActive = statusFilter === option.value;
-                  return (
-                    <button
-                      key={option.value}
-                      onClick={() => setStatusFilter(option.value as Mission['status'] | 'all')}
-                      className={`
-                        flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium
-                        transition-colors border
-                        ${isActive 
-                          ? 'bg-indigo-100 text-indigo-700 border-indigo-200' 
-                          : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
-                        }
-                      `}
-                    >
-                      <Icon className="w-3 h-3" />
-                      {option.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Results Summary */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-sm text-slate-600">
-            {searchQuery || statusFilter !== 'all' ? (
-              <span>
-                Showing {filteredMissions.length} of {stats.total} missions
-                {currentStatusOption && (
-                  <span className="ml-1">
-                    in <strong>{currentStatusOption.label.toLowerCase()}</strong>
-                  </span>
-                )}
-                {searchQuery && (
-                  <span className="ml-1">
-                    matching <strong>"{searchQuery}"</strong>
-                  </span>
-                )}
-              </span>
-            ) : (
-              <span>{stats.total} missions total</span>
-            )}
-          </div>
-          
-          {(searchQuery || statusFilter !== 'all') && (
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setStatusFilter('all');
-              }}
-              className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
-            >
-              Clear filters
-            </button>
-          )}
-        </div>
-
-        {/* Mission Grid */}
         {filteredMissions.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-slate-400 mb-4">
-              {searchQuery || statusFilter !== 'all' ? (
-                <Filter className="w-16 h-16 mx-auto" />
-              ) : (
-                <Plus className="w-16 h-16 mx-auto" />
-              )}
+              <Plus className="w-16 h-16 mx-auto" />
             </div>
             <h2 className="text-xl font-semibold text-slate-900 mb-2">
-              {searchQuery || statusFilter !== 'all' 
-                ? 'No missions found' 
-                : 'Ready to start your AI journey?'
-              }
+              Ready to start your AI journey?
             </h2>
             <p className="text-slate-600 mb-6">
-              {searchQuery || statusFilter !== 'all'
-                ? 'Try adjusting your search or filters to find what you\'re looking for.'
-                : 'Create your first mission to begin tracking your progress.'
-              }
+              Create your first mission to begin tracking your progress.
             </p>
-            {searchQuery || statusFilter !== 'all' ? (
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  setStatusFilter('all');
-                }}
-                className="bg-white text-indigo-600 px-6 py-3 rounded-md border border-indigo-300 hover:bg-indigo-50 transition-colors font-medium"
-              >
-                Clear Filters
-              </button>
-            ) : (
-              <button
-                onClick={handleCreateMission}
-                className="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition-colors font-medium"
-              >
-                Create Mission
-              </button>
-            )}
+            <button
+              onClick={handleCreateMission}
+              className="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition-colors font-medium"
+            >
+              Create Mission
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -324,6 +182,15 @@ export function DashboardView() {
           </div>
         )}
       </main>
+
+      <button
+        onClick={handleCreateMission}
+        className="fixed bottom-20 right-4 inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition sm:hidden"
+        aria-label="Create new mission"
+      >
+        <Plus className="h-4 w-4" />
+        New Mission
+      </button>
     </div>
   );
 }
