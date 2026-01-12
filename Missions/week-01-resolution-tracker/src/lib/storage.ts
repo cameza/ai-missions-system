@@ -75,29 +75,40 @@ export class StorageService {
     };
   }
   
-  private validateMissions(missions: any[]): Mission[] {
-    return missions.filter(mission => {
-      return mission &&
+  private validateMissions(missions: unknown[]): Mission[] {
+    return missions.filter((mission): mission is Mission => {
+      return mission !== null &&
+             typeof mission === 'object' &&
+             'id' in mission &&
              typeof mission.id === 'string' &&
+             'title' in mission &&
              typeof mission.title === 'string' &&
+             'status' in mission &&
              typeof mission.status === 'string' &&
              ['not_started', 'in_progress', 'completed', 'blocked'].includes(mission.status);
     });
   }
   
-  private validateProgressUpdates(updates: any): Record<string, ProgressUpdate[]> {
+  private validateProgressUpdates(updates: unknown): Record<string, ProgressUpdate[]> {
     const validated: Record<string, ProgressUpdate[]> = {};
     
-    Object.entries(updates).forEach(([missionId, missionUpdates]) => {
-      if (Array.isArray(missionUpdates)) {
-        validated[missionId] = missionUpdates.filter(update => {
-          return update &&
-                 typeof update.id === 'string' &&
-                 typeof update.content === 'string' &&
-                 typeof update.missionId === 'string';
-        });
-      }
-    });
+    if (updates && typeof updates === 'object') {
+      Object.entries(updates as Record<string, unknown>).forEach(([missionId, missionUpdates]) => {
+        if (Array.isArray(missionUpdates)) {
+          validated[missionId] = missionUpdates.filter((update): update is ProgressUpdate => {
+            return update !== null &&
+                   typeof update === 'object' &&
+                   'id' in update &&
+                   typeof update.id === 'string' &&
+                   'missionId' in update &&
+                   typeof update.missionId === 'string' &&
+                   'content' in update &&
+                   typeof update.content === 'string' &&
+                   'timestamp' in update;
+          });
+        }
+      });
+    }
     
     return validated;
   }

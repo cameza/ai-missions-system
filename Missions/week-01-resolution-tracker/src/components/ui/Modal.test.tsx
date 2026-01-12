@@ -1,6 +1,24 @@
+import React from 'react';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Modal } from './Modal';
+
+type ModalTestProps = Omit<React.ComponentProps<typeof Modal>, 'isOpen' | 'onClose'> & {
+  initialOpen?: boolean;
+  onClose?: () => void;
+};
+
+function ControlledModal({ initialOpen = true, onClose, ...props }: ModalTestProps) {
+  const [isOpen, setIsOpen] = React.useState(initialOpen);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    onClose?.();
+  };
+
+  return <Modal {...props} isOpen={isOpen} onClose={handleClose} />;
+}
 
 describe('Modal Component', () => {
   it('renders when open', () => {
@@ -27,12 +45,12 @@ describe('Modal Component', () => {
 
   it('calls onClose when close button is clicked', async () => {
     const user = userEvent.setup();
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     
     render(
-      <Modal isOpen={true} onClose={onClose} title="Test Modal">
+      <ControlledModal onClose={onClose} title="Test Modal">
         <p>Modal content</p>
-      </Modal>
+      </ControlledModal>
     );
     
     const closeButton = screen.getByRole('button', { name: /close/i });
@@ -43,36 +61,31 @@ describe('Modal Component', () => {
 
   it('calls onClose when backdrop is clicked', async () => {
     const user = userEvent.setup();
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     
     render(
-      <Modal isOpen={true} onClose={onClose} title="Test Modal" closeOnBackdropClick={true}>
+      <ControlledModal onClose={onClose} title="Test Modal" closeOnBackdropClick={true}>
         <p>Modal content</p>
-      </Modal>
+      </ControlledModal>
     );
-    
-    const backdrop = screen.getByRole('dialog').parentElement;
-    if (backdrop) {
-      await user.click(backdrop);
-      expect(onClose).toHaveBeenCalledTimes(1);
-    }
+    const overlay = screen.getByTestId('modal-overlay');
+    await user.click(overlay);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('does not close on backdrop click when disabled', async () => {
     const user = userEvent.setup();
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     
     render(
-      <Modal isOpen={true} onClose={onClose} title="Test Modal" closeOnBackdropClick={false}>
+      <ControlledModal onClose={onClose} title="Test Modal" closeOnBackdropClick={false}>
         <p>Modal content</p>
-      </Modal>
+      </ControlledModal>
     );
     
-    const backdrop = screen.getByRole('dialog').parentElement;
-    if (backdrop) {
-      await user.click(backdrop);
-      expect(onClose).not.toHaveBeenCalled();
-    }
+    const overlay = screen.getByTestId('modal-overlay');
+    await user.click(overlay);
+    expect(onClose).not.toHaveBeenCalled();
   });
 
   it('hides close button when showCloseButton is false', () => {

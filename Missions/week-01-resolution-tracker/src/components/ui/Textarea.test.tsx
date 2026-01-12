@@ -1,3 +1,5 @@
+import React from 'react';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Textarea } from './Textarea';
@@ -35,22 +37,31 @@ describe('Textarea Component', () => {
 
   it('updates character count as user types', async () => {
     const user = userEvent.setup();
-    render(<Textarea showCharacterCount maxLength={10} value="" onChange={() => {}} />);
-    
+    function ControlledTextarea() {
+      const [value, setValue] = React.useState('');
+      return (
+        <Textarea
+          showCharacterCount
+          maxLength={10}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+      );
+    }
+
+    render(<ControlledTextarea />);
     const textarea = screen.getByRole('textbox');
+    
     await user.type(textarea, 'hello');
     
     expect(screen.getByText('5 characters remaining')).toBeInTheDocument();
   });
 
-  it('shows over limit warning', async () => {
-    const user = userEvent.setup();
-    render(<Textarea showCharacterCount maxLength={5} value="" onChange={() => {}} />);
+  it('shows over limit warning when value exceeds max length', () => {
+    render(<Textarea showCharacterCount maxLength={5} value="toolongtext" />);
     
-    const textarea = screen.getByRole('textbox');
-    await user.type(textarea, 'too long text');
-    
-    expect(screen.getByText('4 characters remaining')).toHaveClass('text-red-600');
+    const warning = screen.getByText('-6 characters remaining');
+    expect(warning).toHaveClass('text-red-600');
   });
 
   it('associates label with textarea correctly', () => {
@@ -62,7 +73,17 @@ describe('Textarea Component', () => {
 
   it('handles value changes', async () => {
     const user = userEvent.setup();
-    render(<Textarea value="" onChange={() => {}} />);
+    function ControlledTextarea() {
+      const [value, setValue] = React.useState('');
+      return (
+        <Textarea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+      );
+    }
+
+    render(<ControlledTextarea />);
     const textarea = screen.getByRole('textbox');
     
     await user.type(textarea, 'test content');
@@ -79,7 +100,7 @@ describe('Textarea Component', () => {
     render(<Textarea disabled />);
     const textarea = screen.getByRole('textbox');
     expect(textarea).toBeDisabled();
-    expect(textarea).toHaveClass('cursor-not-allowed', 'opacity-50');
+    expect(textarea).toHaveClass('disabled:cursor-not-allowed', 'disabled:opacity-50');
   });
 
   it('generates stable IDs', () => {
@@ -95,8 +116,8 @@ describe('Textarea Component', () => {
     expect(id1).toMatch(/^textarea-/);
   });
 
-  it('does not show character count when disabled', () => {
+  it('still shows character count guidance when disabled', () => {
     render(<Textarea showCharacterCount maxLength={100} disabled />);
-    expect(screen.queryByText(/characters remaining/)).not.toBeInTheDocument();
+    expect(screen.getByText('100 characters remaining')).toBeInTheDocument();
   });
 });

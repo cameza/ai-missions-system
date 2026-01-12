@@ -1,3 +1,5 @@
+import React from 'react';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Input } from './Input';
@@ -37,7 +39,12 @@ describe('Input Component', () => {
 
   it('handles value changes', async () => {
     const user = userEvent.setup();
-    render(<Input value="" onChange={() => {}} />);
+    function ControlledInput() {
+      const [value, setValue] = React.useState('');
+      return <Input value={value} onChange={(e) => setValue(e.target.value)} />;
+    }
+
+    render(<ControlledInput />);
     const input = screen.getByRole('textbox');
     
     await user.type(input, 'test input');
@@ -54,7 +61,7 @@ describe('Input Component', () => {
     render(<Input disabled />);
     const input = screen.getByRole('textbox');
     expect(input).toBeDisabled();
-    expect(input).toHaveClass('cursor-not-allowed', 'opacity-50');
+    expect(input).toHaveClass('disabled:cursor-not-allowed', 'disabled:opacity-50');
   });
 
   it('generates stable IDs', () => {
