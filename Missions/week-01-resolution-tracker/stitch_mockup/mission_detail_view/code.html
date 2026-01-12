@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mission Detail View - AI Resolution Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4f44e9",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121121",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#121118] dark:text-white transition-colors duration-200">
+<div class="relative flex min-h-screen w-full flex-col">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 flex items-center justify-between border-b border-[#dcdce5] dark:border-white/10 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 md:px-10 lg:px-40">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="flex size-8 items-center justify-center rounded-lg bg-primary text-white">
+<span class="material-symbols-outlined text-xl">rocket_launch</span>
+</div>
+<h2 class="text-lg font-extrabold tracking-tight">AI Resolver</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-semibold opacity-60 hover:opacity-100 transition-opacity" href="#">Dashboard</a>
+<a class="text-sm font-semibold text-primary" href="#">Missions</a>
+<a class="text-sm font-semibold opacity-60 hover:opacity-100 transition-opacity" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center gap-2 bg-background-light dark:bg-white/5 rounded-lg px-3 py-1.5 border border-[#dcdce5] dark:border-white/10">
+<span class="material-symbols-outlined text-sm opacity-50">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-32 md:w-48 placeholder:opacity-50" placeholder="Search mission..." type="text"/>
+</div>
+<div class="size-9 rounded-full bg-cover bg-center border-2 border-primary/20" data-alt="User profile avatar circle" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAiFfS_bTQQ8mhg5-zVy_aj6yJZyv8YlUBuD4Tw8rItvpzfc9MWAQWN0z-iwYgS46I3J3qogoCoum8nSt4A6QQg8uZYHxS3dwb5RrI-0j04Er2GAnQsKo6OkdRgWMOqZ-0JQOn9FUE1sGlIkIdcNXIJvaXwmpksW2ClZZDq0J2SLn6TXX-xcI4r1_FrYo1sP4Rf0TPWkjIszIJE2Y0vHq4SdsiYB4iYAXKy7mnM7LZTcXInqUoM-Sm17mSp0A2Gppxg2f7LiwumKOg");'></div>
+</div>
+</header>
+<main class="flex-1 px-6 py-8 md:px-10 lg:px-40">
+<div class="max-w-6xl mx-auto">
+<!-- Breadcrumbs & Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+<nav class="flex items-center gap-2 text-sm">
+<a class="flex items-center gap-1 opacity-60 hover:text-primary hover:opacity-100 transition-all" href="#">
+<span class="material-symbols-outlined text-base">arrow_back</span>
+                            Back to Dashboard
+                        </a>
+<span class="opacity-30">/</span>
+<span class="font-medium opacity-100">Mission 04</span>
+</nav>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-2 rounded-lg border border-[#dcdce5] dark:border-white/10 bg-white dark:bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-background-light dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+                            Edit
+                        </button>
+<button class="flex items-center gap-2 rounded-lg border border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-950/20 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+                            Delete
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Main Content Column -->
+<div class="lg:col-span-8 space-y-8">
+<!-- Page Heading -->
+<div class="space-y-4">
+<h1 class="text-4xl font-black leading-tight tracking-[-0.03em]">Automating CI/CD with Large Language Models</h1>
+<div class="flex flex-wrap items-center gap-4">
+<div class="flex items-center gap-3 bg-white dark:bg-white/5 border border-[#dcdce5] dark:border-white/10 rounded-xl px-4 py-2">
+<span class="text-xs font-bold uppercase tracking-wider opacity-50">Status</span>
+<div class="flex items-center gap-2">
+<div class="size-2.5 rounded-full bg-amber-500 animate-pulse"></div>
+<select class="bg-transparent border-none p-0 pr-8 text-sm font-bold focus:ring-0 cursor-pointer">
+<option value="not_started">Not Started</option>
+<option selected="" value="in_progress">In Progress</option>
+<option value="completed">Completed</option>
+<option value="on_hold">On Hold</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-bold">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                                    Updated 2 hours ago
+                                </div>
+</div>
+</div>
+<!-- Description -->
+<div class="rounded-2xl border border-[#dcdce5] dark:border-white/10 bg-white dark:bg-white/5 p-6 shadow-sm">
+<h3 class="text-lg font-bold mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">description</span>
+                                Mission Briefing
+                            </h3>
+<p class="text-base leading-relaxed opacity-80">
+                                This mission focuses on integrating LLM-based code review and optimization steps into the existing Jenkins/GitHub Actions pipeline. The goal is to automatically identify potential bugs, suggest performance improvements, and generate documentation for pull requests before they reach human reviewers. Success is measured by a 30% reduction in trivial PR review comments and a 15% improvement in deployment velocity.
+                            </p>
+</div>
+<!-- Progress Log Form -->
+<div class="rounded-2xl border border-primary/20 bg-primary/[0.02] dark:bg-primary/[0.05] p-6 shadow-sm overflow-hidden relative">
+<div class="absolute top-0 right-0 p-4 opacity-5 select-none">
+<span class="material-symbols-outlined text-8xl">edit_note</span>
+</div>
+<h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">add_circle</span>
+                                Log New Progress
+                            </h3>
+<textarea class="w-full min-h-[120px] rounded-xl border-[#dcdce5] dark:border-white/10 bg-white dark:bg-white/5 p-4 text-base focus:border-primary focus:ring-primary/20 dark:focus:border-primary transition-all placeholder:opacity-50" placeholder="What did you achieve today? Document your breakthroughs or blockers..."></textarea>
+<div class="mt-4 flex justify-end">
+<button class="flex items-center gap-2 rounded-xl bg-primary px-8 py-3 text-sm font-bold text-white shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:scale-[1.02] transition-all active:scale-95">
+                                    Log Update
+                                    <span class="material-symbols-outlined text-[20px]">send</span>
+</button>
+</div>
+</div>
+<!-- Timeline Section -->
+<div class="space-y-6">
+<h3 class="text-lg font-bold flex items-center gap-2 px-2">
+<span class="material-symbols-outlined text-primary">history</span>
+                                Progress Timeline
+                            </h3>
+<div class="relative space-y-0 pb-10">
+<!-- Vertical Line -->
+<div class="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-[#dcdce5] to-transparent dark:via-white/10"></div>
+<!-- Timeline Entry 1 -->
+<div class="relative pl-16 pb-10 group">
+<div class="absolute left-4 top-1 size-4 rounded-full border-4 border-white dark:border-background-dark bg-primary z-10 transition-transform group-hover:scale-125"></div>
+<div class="rounded-xl border border-[#dcdce5] dark:border-white/10 bg-white dark:bg-white/5 p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold uppercase tracking-widest text-primary">Oct 24, 14:20</span>
+<span class="material-symbols-outlined text-sm opacity-30">more_horiz</span>
+</div>
+<p class="text-sm font-medium leading-relaxed opacity-90">
+                                            Successfully integrated OpenAI API with GitHub Actions. The pipeline now triggers a 'Review' workflow on PR creation. Preliminary tests show the LLM can catch basic syntax errors and suggest docstring improvements with 90% accuracy.
+                                        </p>
+</div>
+</div>
+<!-- Timeline Entry 2 -->
+<div class="relative pl-16 pb-10 group">
+<div class="absolute left-4 top-1 size-4 rounded-full border-4 border-white dark:border-background-dark bg-primary/40 z-10 transition-transform group-hover:scale-125"></div>
+<div class="rounded-xl border border-[#dcdce5] dark:border-white/10 bg-white dark:bg-white/5 p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold uppercase tracking-widest text-primary/60">Oct 22, 09:15</span>
+<span class="material-symbols-outlined text-sm opacity-30">more_horiz</span>
+</div>
+<p class="text-sm font-medium leading-relaxed opacity-70 italic">
+                                            Initial research phase completed. Compared performance between GPT-4o and Claude 3.5 Sonnet for code reasoning. Decided to proceed with Sonnet for its better handling of large context windows in monorepos.
+                                        </p>
+</div>
+</div>
+<!-- Timeline Entry 3 -->
+<div class="relative pl-16 group">
+<div class="absolute left-4 top-1 size-4 rounded-full border-4 border-white dark:border-background-dark bg-primary/40 z-10 transition-transform group-hover:scale-125"></div>
+<div class="rounded-xl border border-[#dcdce5] dark:border-white/10 bg-white dark:bg-white/5 p-5 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold uppercase tracking-widest text-primary/60">Oct 18, 11:00</span>
+<span class="material-symbols-outlined text-sm opacity-30">more_horiz</span>
+</div>
+<p class="text-sm font-medium leading-relaxed opacity-70 italic">
+                                            Mission initialized. Scoped the CI/CD pipeline bottlenecks and identified 'PR Feedback Lag' as the primary metric to optimize.
+                                        </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Stats & Meta -->
+<div class="lg:col-span-4 sticky top-24 space-y-6">
+<div class="rounded-2xl border border-[#dcdce5] dark:border-white/10 bg-white dark:bg-white/5 p-6">
+<h4 class="text-sm font-bold uppercase tracking-widest mb-4 opacity-50">Mission Metrics</h4>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-xs font-bold mb-2">
+<span>Pipeline Automation</span>
+<span class="text-primary">65%</span>
+</div>
+<div class="w-full h-2 bg-background-light dark:bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 65%;"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-3 rounded-xl bg-background-light dark:bg-white/5">
+<p class="text-[10px] uppercase font-bold opacity-50 mb-1">Time Invested</p>
+<p class="text-xl font-black">24.5h</p>
+</div>
+<div class="p-3 rounded-xl bg-background-light dark:bg-white/5">
+<p class="text-[10px] uppercase font-bold opacity-50 mb-1">Cost (API)</p>
+<p class="text-xl font-black">$12.40</p>
+</div>
+</div>
+</div>
+</div>
+<div class="rounded-2xl border border-[#dcdce5] dark:border-white/10 bg-white dark:bg-white/5 p-6">
+<h4 class="text-sm font-bold uppercase tracking-widest mb-4 opacity-50">Assigned Tech Stack</h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-2.5 py-1 rounded-md bg-background-light dark:bg-white/10 text-[11px] font-bold">Python</span>
+<span class="px-2.5 py-1 rounded-md bg-background-light dark:bg-white/10 text-[11px] font-bold">GitHub Actions</span>
+<span class="px-2.5 py-1 rounded-md bg-background-light dark:bg-white/10 text-[11px] font-bold">OpenAI SDK</span>
+<span class="px-2.5 py-1 rounded-md bg-background-light dark:bg-white/10 text-[11px] font-bold">Jenkins</span>
+<span class="px-2.5 py-1 rounded-md bg-background-light dark:bg-white/10 text-[11px] font-bold">Docker</span>
+</div>
+</div>
+<div class="p-6 rounded-2xl bg-gradient-to-br from-primary to-[#6d64f0] text-white">
+<h4 class="text-lg font-bold mb-2">Need advice?</h4>
+<p class="text-sm opacity-80 mb-4 leading-relaxed">Connect this mission to your team mentor for automated feedback loops.</p>
+<button class="w-full py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-sm font-bold transition-all">Invite Collaborator</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-auto py-10 border-t border-[#dcdce5] dark:border-white/10 text-center opacity-40 text-xs">
+<p>© 2024 AI Resolution Tracker. Designed for high-performance engineering.</p>
+</footer>
+</div>
+</body></html>

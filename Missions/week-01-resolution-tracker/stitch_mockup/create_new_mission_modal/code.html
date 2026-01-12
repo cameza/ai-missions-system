@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create New Mission - AI Resolution Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4f44e9",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121121",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .modal-overlay {
+            background-color: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<!-- Dashboard Background (Simulated) -->
+<div class="fixed inset-0 z-0 p-8 flex flex-col gap-6">
+<header class="flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-xl">bolt</span>
+</div>
+<h1 class="text-xl font-bold text-slate-900 dark:text-white">AI Resolution Tracker</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex -space-x-2">
+<img alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-white dark:border-background-dark" data-alt="Small round profile avatar of a tech professional" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_6OQHFck3JqVYcSQuv1Zv6IUVbl1MErk4-hij3H-SexCP6yMDoncU5r4X10XHe-yjNjiAXg_8Pia24rvzLuUA1bhKb69sruho3UV0cimORWnUWHLMo1o2PDfT7aEc5et-FgfULUk43N-_tJTqDXo_67CfjTNgpC8GUMlQe9nv7EREFrweQmjHyvnPHWyDO6JMrTemzAV56zlzQcbA4CEODTGz29DgbR3LFbYhxvV7mavKmj0xgYQzDYUyAplQUE-USf2lpDQN0vk"/>
+</div>
+</div>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<p class="text-sm text-slate-500 mb-1">Active Missions</p>
+<p class="text-2xl font-bold text-slate-900 dark:text-white">3 / 10</p>
+</div>
+<div class="p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<p class="text-sm text-slate-500 mb-1">Tasks Completed</p>
+<p class="text-2xl font-bold text-slate-900 dark:text-white">42</p>
+</div>
+<div class="p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+<p class="text-sm text-slate-500 mb-1">Current Streak</p>
+<p class="text-2xl font-bold text-slate-900 dark:text-white">12 Days</p>
+</div>
+</div>
+<div class="flex-1 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex items-center justify-center opacity-50">
+<p class="text-slate-500">Dashboard content blurred for modal focus</p>
+</div>
+</div>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+<!-- Modal Container -->
+<div class="w-full max-w-[560px] bg-white dark:bg-slate-900 rounded-xl shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
+<!-- PageHeading Component Style -->
+<div class="px-6 pt-8 pb-4">
+<div class="flex flex-wrap justify-between items-start gap-4">
+<div class="flex flex-col gap-1">
+<h2 class="text-slate-900 dark:text-white text-2xl font-bold tracking-tight">New Mission</h2>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal">Define your next AI challenge to track your progress.</p>
+</div>
+<div class="inline-flex items-center px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">
+<span class="text-slate-600 dark:text-slate-300 text-xs font-semibold tabular-nums">3 of 10 missions used</span>
+</div>
+</div>
+</div>
+<!-- Form Body -->
+<div class="px-6 py-4 flex flex-col gap-6">
+<!-- TextField: Title -->
+<div class="flex flex-col gap-2">
+<label class="text-slate-900 dark:text-slate-200 text-sm font-semibold leading-normal" for="mission-title">
+                        Mission Title <span class="text-primary">*</span>
+</label>
+<input class="form-input flex w-full rounded-lg text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary h-12 placeholder:text-slate-400 px-4 text-base font-normal leading-normal transition-colors" id="mission-title" placeholder="e.g., Mastering LLM Prompt Engineering" type="text" value=""/>
+</div>
+<!-- TextField: Description -->
+<div class="flex flex-col gap-2">
+<label class="text-slate-900 dark:text-slate-200 text-sm font-semibold leading-normal" for="mission-desc">
+                        Description (Optional)
+                    </label>
+<textarea class="form-input flex w-full resize-none rounded-lg text-slate-900 dark:text-white border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary min-h-[140px] placeholder:text-slate-400 p-4 text-base font-normal leading-normal transition-colors" id="mission-desc" placeholder="Describe the outcomes you want to achieve with this AI skill or project..."></textarea>
+</div>
+<!-- Advanced settings hint (Visual interest) -->
+<div class="flex items-center gap-3 p-4 bg-primary/5 dark:bg-primary/10 rounded-lg border border-primary/10">
+<span class="material-symbols-outlined text-primary text-[20px]">info</span>
+<p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                        Missions help you compartmentalize learning. Once started, you can add specific milestones to track granular progress.
+                    </p>
+</div>
+</div>
+<!-- ButtonGroup Component Style -->
+<div class="px-6 py-6 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+<button class="flex min-w-[100px] cursor-pointer items-center justify-center rounded-lg h-11 px-5 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-semibold transition-all hover:bg-slate-50 dark:hover:bg-slate-700">
+                    Cancel
+                </button>
+<button class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-11 px-5 bg-primary text-white text-sm font-semibold shadow-lg shadow-primary/25 transition-all hover:opacity-90 active:scale-[0.98]">
+                    Create Mission
+                </button>
+</div>
+</div>
+</div>
+<!-- Background Decoration -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10 overflow-hidden">
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[100px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[100px]"></div>
+</div>
+</body></html>

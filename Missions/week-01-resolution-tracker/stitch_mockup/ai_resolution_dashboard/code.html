@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Resolution Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4f44e9",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#121121",
+                        "slate-custom": {
+                            50: "#f8fafc",
+                            100: "#f1f5f9",
+                            200: "#e2e8f0",
+                            300: "#cbd5e1",
+                            400: "#94a3b8",
+                            500: "#64748b",
+                            600: "#475569",
+                            700: "#334155",
+                            800: "#1e293b",
+                            900: "#0f172a",
+                        }
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen text-slate-custom-900 dark:text-slate-custom-100">
+<div class="layout-container flex flex-col min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-10 w-full border-b border-slate-custom-200 dark:border-slate-custom-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg">
+<svg class="size-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-slate-custom-900 dark:text-white">AI Resolution Tracker</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden sm:flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        New Mission
+                    </button>
+<button class="p-2 text-slate-custom-500 hover:bg-slate-custom-100 dark:hover:bg-slate-custom-800 rounded-lg transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-7xl mx-auto px-6 py-8 w-full">
+<!-- Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+<div class="bg-white dark:bg-slate-custom-900 border border-slate-custom-200 dark:border-slate-custom-800 rounded-xl p-6 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<p class="text-slate-custom-500 dark:text-slate-custom-400 font-medium text-sm">Total Missions</p>
+<span class="material-symbols-outlined text-primary text-xl">assignment</span>
+</div>
+<p class="text-3xl font-bold text-slate-custom-900 dark:text-white tracking-tight">10</p>
+</div>
+<div class="bg-white dark:bg-slate-custom-900 border border-slate-custom-200 dark:border-slate-custom-800 rounded-xl p-6 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<p class="text-slate-custom-500 dark:text-slate-custom-400 font-medium text-sm">In Progress</p>
+<span class="material-symbols-outlined text-amber-500 text-xl">sync_alt</span>
+</div>
+<p class="text-3xl font-bold text-slate-custom-900 dark:text-white tracking-tight">4</p>
+</div>
+<div class="bg-white dark:bg-slate-custom-900 border border-slate-custom-200 dark:border-slate-custom-800 rounded-xl p-6 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<p class="text-slate-custom-500 dark:text-slate-custom-400 font-medium text-sm">Completed</p>
+<span class="material-symbols-outlined text-emerald-500 text-xl">check_circle</span>
+</div>
+<p class="text-3xl font-bold text-slate-custom-900 dark:text-white tracking-tight">3</p>
+</div>
+</div>
+<!-- Section Header -->
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-2xl font-bold text-slate-custom-900 dark:text-white">Active Missions</h2>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-custom-500 hover:bg-white dark:hover:bg-slate-custom-800 border border-transparent hover:border-slate-custom-200 dark:hover:border-slate-custom-700 rounded-lg transition-all">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="p-2 text-slate-custom-500 hover:bg-white dark:hover:bg-slate-custom-800 border border-transparent hover:border-slate-custom-200 dark:hover:border-slate-custom-700 rounded-lg transition-all">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+</div>
+</div>
+<!-- Mission Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Mission Card 1 -->
+<div class="group bg-white dark:bg-slate-custom-900 border border-slate-custom-200 dark:border-slate-custom-800 rounded-xl p-5 hover:shadow-xl transition-all hover:-translate-y-1">
+<div class="w-full h-40 bg-slate-custom-100 dark:bg-slate-custom-800 rounded-lg mb-4 bg-cover bg-center overflow-hidden" data-alt="Microchip circuit patterns and neural network lines" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBLvFyCVmnJ7m5pMUXrqeolcAUhzPwQBKIX1SpqiAglbpbLrahrztPhk6-7a-pKHOkp2plMxOjnPpH4bSwWMGbqhJ3R1CzvbTocrPOQPyfLfXiJhmDfaEfojIBqUDYn5UPoAL2YwxgtYPkqjoMhqg1QwgQCv6oyEgAp-Vo5A8wNjOUwm0ClE7k2jFGw3tf7skqfT4LEjyf4y0szdkkWZEtWsY41ddKAdW1rNHwxqvK_st3vLU2G18NzlWoRetNp6AxW7-_uEocBO5k');"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wider">In Progress</span>
+<p class="text-xs text-slate-custom-400 dark:text-slate-custom-500">2h ago</p>
+</div>
+<h3 class="text-lg font-bold text-slate-custom-900 dark:text-white mb-2 leading-tight group-hover:text-primary transition-colors">Fine-tune LLM for Documentation</h3>
+<p class="text-slate-custom-600 dark:text-slate-custom-400 text-sm line-clamp-2 mb-4">Exploring LoRA adapters to improve internal tech docs accessibility and context-aware responses.</p>
+<div class="flex items-center justify-between pt-4 border-t border-slate-custom-100 dark:border-slate-custom-800">
+<div class="flex -space-x-2">
+<div class="size-6 rounded-full bg-primary/20 border-2 border-white dark:border-slate-custom-900 flex items-center justify-center text-[10px] font-bold">AI</div>
+<div class="size-6 rounded-full bg-emerald-500/20 border-2 border-white dark:border-slate-custom-900 flex items-center justify-center text-[10px] font-bold text-emerald-500">ML</div>
+</div>
+<span class="material-symbols-outlined text-slate-custom-400 text-[20px] cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+<!-- Mission Card 2 -->
+<div class="group bg-white dark:bg-slate-custom-900 border border-slate-custom-200 dark:border-slate-custom-800 rounded-xl p-5 hover:shadow-xl transition-all hover:-translate-y-1">
+<div class="w-full h-40 bg-slate-custom-100 dark:bg-slate-custom-800 rounded-lg mb-4 bg-cover bg-center overflow-hidden" data-alt="Isometric server rack with glowing data nodes" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC422FPilr5mVe0rkEVbOFePN5FXkQiLhw7Y3ePXSj4j5kOul9ph2mkOFPcEPGpTaeZomPxR8kyVGAJAJXEvddVqCA56SL0SSHDvRGYs8Ob9i8o-97UpdqqLQTQabTPj2Zbvy8T4b5ataGb6ceQ0nxkWPrg2CLEED4FRq-bWgtaq8Vz8_446pf_BDkAHI2a0YzalnOYA6Xbv5kPCMKwwxruhmTr15X5QmFeo2-vRzii4Fu6cTpDJ1pdJPRkvOmYb081VwQJyk5nfG8');"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-bold uppercase tracking-wider">Blocked</span>
+<p class="text-xs text-slate-custom-400 dark:text-slate-custom-500">5h ago</p>
+</div>
+<h3 class="text-lg font-bold text-slate-custom-900 dark:text-white mb-2 leading-tight group-hover:text-primary transition-colors">Deploy RAG Pipeline</h3>
+<p class="text-slate-custom-600 dark:text-slate-custom-400 text-sm line-clamp-2 mb-4">Setting up Pinecone and LangChain for semantic search across enterprise knowledge base.</p>
+<div class="flex items-center justify-between pt-4 border-t border-slate-custom-100 dark:border-slate-custom-800">
+<div class="flex -space-x-2">
+<div class="size-6 rounded-full bg-primary/20 border-2 border-white dark:border-slate-custom-900 flex items-center justify-center text-[10px] font-bold">DB</div>
+</div>
+<span class="material-symbols-outlined text-slate-custom-400 text-[20px] cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+<!-- Mission Card 3 -->
+<div class="group bg-white dark:bg-slate-custom-900 border border-slate-custom-200 dark:border-slate-custom-800 rounded-xl p-5 hover:shadow-xl transition-all hover:-translate-y-1">
+<div class="w-full h-40 bg-slate-custom-100 dark:bg-slate-custom-800 rounded-lg mb-4 bg-cover bg-center overflow-hidden" data-alt="Clean lines of computer code on a dark screen" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAcJhl8rzt-qSHMMWkGAgrrPM1RZ7gMG6ziuCFoP8hQM9yGlRzUdiMgiDTwdXlPerSZYcGOPicLK3S9AGszpLp4kLavan33WlMedTts54NsgQQ_bm4D8HNhkPLL1_veWn9dqEbrxovjkWe6wXEzcKeKsKe0HTIGGFtIWLFt7eImZyPk9_HEnOK0YJtna4OF9W25WHasfUZt2pscUuOjJa6YLOXEaF9oRExL4rpKPr2hJXFasLNSLLcNEGUJ-zdLxLWD1XLvWJjR3rE');"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider">Completed</span>
+<p class="text-xs text-slate-custom-400 dark:text-slate-custom-500">1d ago</p>
+</div>
+<h3 class="text-lg font-bold text-slate-custom-900 dark:text-white mb-2 leading-tight group-hover:text-primary transition-colors">Automate Code Reviews</h3>
+<p class="text-slate-custom-600 dark:text-slate-custom-400 text-sm line-clamp-2 mb-4">Integration of GPT-4 into GitHub Actions workflow to provide early architectural feedback.</p>
+<div class="flex items-center justify-between pt-4 border-t border-slate-custom-100 dark:border-slate-custom-800">
+<div class="flex -space-x-2">
+<div class="size-6 rounded-full bg-slate-custom-900/20 border-2 border-white dark:border-slate-custom-900 flex items-center justify-center text-[10px] font-bold">GH</div>
+</div>
+<span class="material-symbols-outlined text-slate-custom-400 text-[20px] cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+<!-- Mission Card 4 -->
+<div class="group bg-white dark:bg-slate-custom-900 border border-slate-custom-200 dark:border-slate-custom-800 rounded-xl p-5 hover:shadow-xl transition-all hover:-translate-y-1">
+<div class="w-full h-40 bg-slate-custom-100 dark:bg-slate-custom-800 rounded-lg mb-4 bg-cover bg-center overflow-hidden" data-alt="Blurred people in a modern office workshop setting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDHav0QJrfL9eiPj4pC-Vg77Hq46D7V6YumLLZdI8xXuufblH2BCb2SPSmMpTeEU0gPux4icSZ_KNvfNibtV9H2Ud9OAO_iKc1lOUf9tZZwZHOikz8ctwETVpW7F9BpbFYGeuhv0A19IWRgDhE2mY-URLnKg7IsQhW9s-CYRW_vEUExv9K0fh9z55ePwsviCqT59YJtcexQm8keq-Wpiwv-yD7Ff5Q3jLv8FXFr9RmptB7nb5iL0Hp0ZjJApuSf-qXEtXNEh6LoG8g');"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="px-2 py-0.5 rounded-full bg-slate-custom-100 dark:bg-slate-custom-800 text-slate-custom-600 dark:text-slate-custom-400 text-[10px] font-bold uppercase tracking-wider">Not Started</span>
+<p class="text-xs text-slate-custom-400 dark:text-slate-custom-500">3d ago</p>
+</div>
+<h3 class="text-lg font-bold text-slate-custom-900 dark:text-white mb-2 leading-tight group-hover:text-primary transition-colors">Prompt Engineering Workshop</h3>
+<p class="text-slate-custom-600 dark:text-slate-custom-400 text-sm line-clamp-2 mb-4">Internal training session for engineering teams on advanced few-shot techniques.</p>
+<div class="flex items-center justify-between pt-4 border-t border-slate-custom-100 dark:border-slate-custom-800">
+<div class="flex -space-x-2">
+<div class="size-6 rounded-full bg-primary/20 border-2 border-white dark:border-slate-custom-900 flex items-center justify-center text-[10px] font-bold">EDU</div>
+</div>
+<span class="material-symbols-outlined text-slate-custom-400 text-[20px] cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+<!-- Mission Card 5 -->
+<div class="group bg-white dark:bg-slate-custom-900 border border-slate-custom-200 dark:border-slate-custom-800 rounded-xl p-5 hover:shadow-xl transition-all hover:-translate-y-1">
+<div class="w-full h-40 bg-slate-custom-100 dark:bg-slate-custom-800 rounded-lg mb-4 bg-cover bg-center overflow-hidden" data-alt="Abstract digital wave in dark blue tones" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCMcRdLs_irdGRdkRBEs2NirIXK4wXtmGBUjaW6nYz14fu1xqozWDOIqm4S5hGgxC7Tz3pPmM_u_oyrUg1n3_hPr2C1JtlepQRD1dbUgAkHKoH9MmNyqcdfyI5hKkU_sliZmvGWaZdDmatS41fS_vocmOb8870ZvhVpZMehVFDwXt12kB1XlhLIcc-oxAtNBXYkXOaFvS2w0tARwv7fEQcO4j8yRJkiA9VVBq_5ke-GuPaEgVZUoF-N2tkJUtxcwYbOHm3893El518');"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wider">In Progress</span>
+<p class="text-xs text-slate-custom-400 dark:text-slate-custom-500">4h ago</p>
+</div>
+<h3 class="text-lg font-bold text-slate-custom-900 dark:text-white mb-2 leading-tight group-hover:text-primary transition-colors">Model Quantization Project</h3>
+<p class="text-slate-custom-600 dark:text-slate-custom-400 text-sm line-clamp-2 mb-4">Reducing inference latency for edge deployment on ARM devices using 4-bit quantization.</p>
+<div class="flex items-center justify-between pt-4 border-t border-slate-custom-100 dark:border-slate-custom-800">
+<div class="flex -space-x-2">
+<div class="size-6 rounded-full bg-primary/20 border-2 border-white dark:border-slate-custom-900 flex items-center justify-center text-[10px] font-bold">OPS</div>
+</div>
+<span class="material-symbols-outlined text-slate-custom-400 text-[20px] cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+<!-- Mission Card 6 -->
+<div class="group bg-white dark:bg-slate-custom-900 border border-slate-custom-200 dark:border-slate-custom-800 rounded-xl p-5 hover:shadow-xl transition-all hover:-translate-y-1">
+<div class="w-full h-40 bg-slate-custom-100 dark:bg-slate-custom-800 rounded-lg mb-4 bg-cover bg-center overflow-hidden" data-alt="Glowing neon lines representing database connection" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCJVWKTaWz8L_PS4aTA1BI2NliTlkRK2u-KKuA53-Cg7adh2oTwhyvcp12bJIBA4zJw8sVPHHs5WehdyDS2gwk-Z16nOfgo0fdfQ2nEIf0Cs3iMFbP3eu0ZKcOKe00VZ9lI9Hl47tVwkPIGWDGl1pd71C3tuSYC8drpW34Q5A0wlUVVUTh66os7EGGrirlqiHSw2hJ_rBxqH6qrb_7O7umJhrAZXUorQeWHi2DIYV2evbN1mYcvUDlZpRCqzp8JW-LnOcR9fH506TA');"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold uppercase tracking-wider">In Progress</span>
+<p class="text-xs text-slate-custom-400 dark:text-slate-custom-500">6h ago</p>
+</div>
+<h3 class="text-lg font-bold text-slate-custom-900 dark:text-white mb-2 leading-tight group-hover:text-primary transition-colors">Vector Database Migration</h3>
+<p class="text-slate-custom-600 dark:text-slate-custom-400 text-sm line-clamp-2 mb-4">Scaling metadata filtering for enterprise search and optimizing shard distribution.</p>
+<div class="flex items-center justify-between pt-4 border-t border-slate-custom-100 dark:border-slate-custom-800">
+<div class="flex -space-x-2">
+<div class="size-6 rounded-full bg-primary/20 border-2 border-white dark:border-slate-custom-900 flex items-center justify-center text-[10px] font-bold">DATA</div>
+</div>
+<span class="material-symbols-outlined text-slate-custom-400 text-[20px] cursor-pointer hover:text-primary">more_horiz</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (Mobile Only View Alternate) -->
+<div class="fixed bottom-8 right-8 lg:hidden">
+<button class="flex items-center justify-center size-14 bg-primary text-white rounded-full shadow-2xl hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</body></html>
