@@ -40,13 +40,17 @@ function App() {
     <ErrorBoundary>
       <div className="min-h-screen bg-background-light text-slate-900">
         {showMissionDetail && selectedMissionId ? (
-          <MissionDetailView
-            missionId={selectedMissionId}
-            onBack={handleBackToDashboard}
-            onEdit={handleEditMission}
-          />
+          <main id="main-content" role="main">
+            <MissionDetailView
+              missionId={selectedMissionId}
+              onBack={handleBackToDashboard}
+              onEdit={handleEditMission}
+            />
+          </main>
         ) : (
-          <DashboardView />
+          <main id="main-content" role="main">
+            <DashboardView />
+          </main>
         )}
 
         {showMissionModal && (

@@ -51,9 +51,9 @@ export function ProgressTimeline({
           <MessageCircle className="w-4 h-4" />
           <h3 className="font-medium">Progress Updates</h3>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-3" data-testid="loading-skeletons">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse">
+            <div key={i} className="animate-pulse" data-testid={`skeleton-${i}`}>
               <div className="flex gap-3">
                 <div className="w-2 h-2 bg-slate-300 rounded-full mt-2"></div>
                 <div className="flex-1 space-y-2">

@@ -1,4 +1,5 @@
 import { Edit, Trash2, Calendar, MessageSquare } from 'lucide-react';
+import { memo, useCallback } from 'react';
 import type { Mission } from '../../types';
 import { StatusBadge } from '../ui/StatusBadge';
 
@@ -12,7 +13,7 @@ interface MissionCardProps {
   isLoading?: boolean;
 }
 
-export function MissionCard({
+export const MissionCard = memo(function MissionCard({
   mission,
   progressCount,
   onEdit,
@@ -24,6 +25,24 @@ export function MissionCard({
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onStatusChange(mission.id, e.target.value as Mission['status']);
   };
+
+  const handleEditClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit(mission.id);
+  }, [onEdit, mission.id]);
+
+  const handleDeleteClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete(mission.id);
+  }, [onDelete, mission.id]);
+
+  const handleCardClick = useCallback(() => {
+    onViewDetails(mission.id);
+  }, [onViewDetails, mission.id]);
+
+  const handleStatusSelectClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -48,15 +67,12 @@ export function MissionCard({
 
   return (
     <article
-      className="
-        group relative overflow-hidden rounded-2xl border border-white/60 bg-white/90 p-5 shadow-card transition-all duration-300 
-        hover:-translate-y-1.5 hover:shadow-card-hover focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2
-      "
-      onClick={() => onViewDetails(mission.id)}
+      className="group relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40"
+      onClick={handleCardClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`Mission: ${mission.title}. Status: ${mission.status.replace('_', ' ')}. ${updatesCopy}. Press Enter or Space to view details.`}
+      aria-label={`View details for mission: ${mission.title}. Status: ${mission.status.replace('_', ' ')}. ${updatesCopy}. Press Enter or Space to view details.`}
     >
       <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100" aria-hidden="true">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
@@ -108,10 +124,7 @@ export function MissionCard({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-3 border-t border-slate-100">
           <div className="flex items-center gap-2">
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(mission.id);
-              }}
+              onClick={handleEditClick}
               disabled={isLoading}
               aria-hidden={isLoading}
               className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/40"
@@ -121,10 +134,7 @@ export function MissionCard({
               Edit
             </button>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(mission.id);
-              }}
+              onClick={handleDeleteClick}
               disabled={isLoading}
               aria-hidden={isLoading}
               className="inline-flex items-center gap-1.5 rounded-xl border border-red-100 bg-red-50/70 px-3 py-2 text-xs font-semibold text-red-600 transition hover:border-red-200 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300"
@@ -143,7 +153,7 @@ export function MissionCard({
               id={`status-${mission.id}`}
               value={mission.status}
               onChange={handleStatusChange}
-              onClick={(e) => e.stopPropagation()}
+              onClick={handleStatusSelectClick}
               className="rounded-xl border border-slate-200 bg-white/80 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-300 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
               aria-label={`Change status for mission: ${mission.title}`}
             >
@@ -157,4 +167,4 @@ export function MissionCard({
       </div>
     </article>
   );
-}
+});

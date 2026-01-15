@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Plus, Filter, TrendingUp, CheckCircle, Archive, Sparkles } from 'lucide-react';
 import type { Mission } from '../types';
 import { useMissionStore, useMissionStats } from '../store/missionStore';
@@ -24,7 +24,7 @@ export function DashboardView() {
   } = useMissionStore();
   
   const stats = useMissionStats();
-  const statCards = [
+  const statCards = useMemo(() => [
     {
       label: 'Total Missions',
       value: stats.total,
@@ -46,7 +46,7 @@ export function DashboardView() {
       bgColor: 'bg-emerald-100',
       iconColor: 'text-emerald-600',
     },
-  ];
+  ], [stats.total, stats.inProgress, stats.completed]);
 
   const filteredMissions = useMemo(() => {
     return missions.filter((mission) => {
@@ -60,49 +60,49 @@ export function DashboardView() {
     });
   }, [missions, searchQuery, statusFilter]);
 
-  const handleCreateMission = () => {
+  const handleCreateMission = useCallback(() => {
     setCurrentView('create-mission');
-  };
+  }, [setCurrentView]);
 
-  const handleViewMission = (id: string) => {
+  const handleViewMission = useCallback((id: string) => {
     setSelectedMissionId(id);
     setCurrentView('mission-detail');
-  };
+  }, [setSelectedMissionId, setCurrentView]);
 
-  const handleEditMission = (id: string) => {
+  const handleEditMission = useCallback((id: string) => {
     setSelectedMissionId(id);
     setCurrentView('create-mission');
-  };
+  }, [setSelectedMissionId, setCurrentView]);
 
-  const handleDeleteMission = (id: string, title: string) => {
+  const handleDeleteMission = useCallback((id: string, title: string) => {
     setMissionToDelete({ id, title });
     setShowDeleteDialog(true);
-  };
+  }, [setMissionToDelete, setShowDeleteDialog]);
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = useCallback(async () => {
     if (!missionToDelete) return;
-    
+
     setIsDeleting(true);
     try {
       await deleteMission(missionToDelete.id, missionToDelete.title);
-      setShowDeleteDialog(false);
-      setMissionToDelete(null);
+      toast.success('Mission deleted successfully');
     } catch (error) {
-      console.error('Failed to delete mission:', error);
-      toast.error('Failed to delete mission. Please try again.');
+      toast.error('Failed to delete mission');
     } finally {
       setIsDeleting(false);
+      setShowDeleteDialog(false);
+      setMissionToDelete(null);
     }
-  };
+  }, [missionToDelete, deleteMission, toast, setIsDeleting, setShowDeleteDialog, setMissionToDelete]);
 
-  const handleCancelDelete = () => {
+  const handleCancelDelete = useCallback(() => {
     setShowDeleteDialog(false);
     setMissionToDelete(null);
-  };
+  }, [setShowDeleteDialog, setMissionToDelete]);
 
-  const handleStatusChange = (id: string, status: Mission['status']) => {
+  const handleStatusChange = useCallback((id: string, status: Mission['status']) => {
     updateMission(id, { status });
-  };
+  }, [updateMission]);
 
   const getProgressCount = (missionId: string) => {
     return progressUpdates[missionId]?.length || 0;
@@ -129,7 +129,7 @@ export function DashboardView() {
                 <Plus className="h-4 w-4" />
                 New Mission
               </button>
-              <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+              <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors" aria-label="Settings">
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -163,10 +163,10 @@ export function DashboardView() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-slate-900">Active Missions</h2>
           <div className="flex items-center gap-2">
-            <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+            <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors" aria-label="Filter missions">
               <Filter className="h-5 w-5" />
             </button>
-            <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+            <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors" aria-label="Switch to grid view">
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
               </svg>
