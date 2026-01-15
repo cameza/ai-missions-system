@@ -103,8 +103,10 @@ People undertaking multi-week challenge programs struggle to maintain momentum a
 - Display total missions count
 - Display missions by status (Not Started, In Progress, Completed)
 - Show completion percentage
-- Display most recent progress updates across all missions
+- Display mission cards with individual progress counts
 - Quick navigation to mission details
+
+**Note**: Cross-mission progress feed was descoped in favor of individual mission progress tracking within detail view.
 
 ### FR-6: Mission Detail View
 **Description**: Detailed view of individual mission
@@ -157,6 +159,44 @@ People undertaking multi-week challenge programs struggle to maintain momentum a
 - Backup/export capabilities (should have)
 - Data retention: User-controlled
 
+## Technical Implementation
+
+### State Management
+- **Zustand** with devtools middleware for global state management
+- Derived selectors for statistics and filtering:
+  - `useMissionStats` - Aggregate statistics (total, by status, completion %)
+  - `useMissionsByStatus` - Filter missions by status
+  - `useMissionProgress` - Get progress updates for specific mission
+  - `useMissionById` - Retrieve single mission by ID
+  - `useActiveMissions` - Filter active missions only
+
+### Validation & Type Safety
+- **Zod schemas** for runtime validation of Mission and ProgressUpdate types
+- Separate schemas for storage (string dates) vs runtime (Date objects)
+- Type guards (`isMission`, `isProgressUpdate`) for safe data handling
+- TypeScript strict mode enabled throughout codebase
+
+### Form Handling
+- **react-hook-form** with Zod resolver for declarative form validation
+- Real-time validation feedback
+- Keyboard shortcuts (Enter to submit, Shift+Enter for new line)
+- Character count indicators for text inputs
+
+### Error Handling & User Feedback
+- React ErrorBoundary for graceful failure recovery
+- Toast notifications via **react-hot-toast** for user feedback:
+  - Mission created/updated/deleted confirmations
+  - Storage errors and quota warnings
+  - Progress update confirmations
+- Storage quota monitoring with warnings at 80% capacity
+- Data validation and corruption recovery on load
+
+### Storage Service Features
+- Versioned data storage for future migration support
+- Storage usage statistics and monitoring
+- Automatic data validation and repair
+- Graceful degradation on storage failures
+
 ## Success Metrics
 
 ### Completion Criteria
@@ -197,7 +237,13 @@ Mission is complete when:
 - WCAG AA accessibility
 - Single-user experience (no authentication)
 - Text-based progress updates
-- Basic mission metadata (title, description, status)
+- Basic mission metadata (title, description, status, isActive flag)
+- Toast notifications for user feedback
+- Keyboard shortcuts for form submission
+- Storage quota monitoring and warnings
+- Data validation and corruption recovery
+- Character count indicators
+- Mission limit enforcement (10 missions maximum)
 
 ### OUT OF SCOPE
 - User authentication and multi-user support
@@ -227,12 +273,16 @@ Mission is complete when:
 - User understands basic web application interactions
 
 ### OPEN QUESTIONS
+
+**Resolved During Implementation:**
+- ~~Should progress updates support markdown formatting?~~ → **No** - Plain text only for MVP
+- ~~Is there a maximum number of missions we should support?~~ → **10 missions** (UI displays "X of 10 missions used")
+
+**Remaining for Future Consideration:**
 - Should missions have categories or tags for organization?
 - Do we need mission prioritization features?
 - Should there be a "streak" tracking feature for consistent logging?
 - Do we need advanced analytics/charts for progress visualization?
-- Is there a maximum number of missions we should support?
-- Should progress updates support markdown formatting?
 - Do we need mission archiving or completion celebrations?
 - Should we implement data export functionality in MVP?
 - Is there a need for mission dependencies or ordering?
@@ -246,8 +296,9 @@ Mission is complete when:
 
 ---
 
-**Document Status**: Approved  
-**Version**: 1.0  
-**Last Updated**: January 11, 2026  
+**Document Status**: Approved (Updated Post-Implementation)  
+**Version**: 1.1  
+**Last Updated**: January 14, 2026  
 **Approvals**: Tech Lead ✅ (Jan 11, 2026), Designer ✅ (Jan 11, 2026)  
-**Next Review**: None (approved for implementation)
+**Implementation Review**: Jan 14, 2026 - Technical implementation details documented  
+**Next Review**: Post-deployment retrospective

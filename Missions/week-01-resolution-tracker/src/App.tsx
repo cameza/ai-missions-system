@@ -1,6 +1,8 @@
+import { Toaster } from 'react-hot-toast';
 import { DashboardView } from './views/DashboardView';
 import { MissionDetailView } from './views/MissionDetailView';
 import { CreateMissionModal } from './components/Mission/CreateMissionModal';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { useMissionStore } from './store/missionStore';
 
 function App() {
@@ -35,21 +37,25 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background-light text-slate-900">
-      {showMissionDetail && selectedMissionId ? (
-        <MissionDetailView
-          missionId={selectedMissionId}
-          onBack={handleBackToDashboard}
-          onEdit={handleEditMission}
-        />
-      ) : (
-        <DashboardView />
-      )}
+    <ErrorBoundary>
+      <div className="min-h-screen bg-background-light text-slate-900">
+        {showMissionDetail && selectedMissionId ? (
+          <MissionDetailView
+            missionId={selectedMissionId}
+            onBack={handleBackToDashboard}
+            onEdit={handleEditMission}
+          />
+        ) : (
+          <DashboardView />
+        )}
 
-      {showMissionModal && (
-        <CreateMissionModal onClose={handleCloseModal} />
-      )}
-    </div>
+        {showMissionModal && (
+          <CreateMissionModal onClose={handleCloseModal} />
+        )}
+        
+        <Toaster />
+      </div>
+    </ErrorBoundary>
   );
 }
 

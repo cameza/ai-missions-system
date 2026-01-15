@@ -4,6 +4,9 @@ import { useMissionStore, useMissionProgress } from '../store/missionStore';
 import { ProgressTimeline } from '../components/Progress/ProgressTimeline';
 import { ProgressForm } from '../components/Progress/ProgressForm';
 import { StatusBadge } from '../components/ui/StatusBadge';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
+import { useToast } from '../hooks/useToast';
+import { useState } from 'react';
 
 interface MissionDetailViewProps {
   missionId: string;
@@ -16,6 +19,10 @@ export function MissionDetailView({
   onBack,
   onEdit,
 }: MissionDetailViewProps) {
+  const toast = useToast();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
   const mission = useMissionStore((state) => 
     state.missions.find(m => m.id === missionId)
   );
@@ -27,18 +34,25 @@ export function MissionDetailView({
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this mission? This action cannot be undone.')) {
-      return;
-    }
+    setShowDeleteDialog(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
     try {
-      await deleteMission(missionId);
-      alert('Mission deleted successfully.');
+      await deleteMission(missionId, mission?.title);
+      setShowDeleteDialog(false);
       onBack();
     } catch (error) {
       console.error('Failed to delete mission:', error);
-      alert('Failed to delete mission. Please try again.');
+      toast.error('Failed to delete mission. Please try again.');
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
   };
 
   const handleProgressSubmit = (data: { content: string }) => {
@@ -229,6 +243,19 @@ export function MissionDetailView({
           </div>
         </div>
       </main>
+
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Delete Mission"
+        message={`Are you sure you want to delete "${mission?.title || 'this mission'}"? This action cannot be undone.`}
+        confirmText="Delete Mission"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={isDeleting}
+        closeOnConfirm={false}
+      />
     </div>
   );
 }

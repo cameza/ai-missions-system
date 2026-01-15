@@ -3,10 +3,16 @@ import { Plus, Filter, TrendingUp, CheckCircle, Archive, Sparkles } from 'lucide
 import type { Mission } from '../types';
 import { useMissionStore, useMissionStats } from '../store/missionStore';
 import { MissionCard } from '../components/Shared/MissionCard';
+import { useToast } from '../hooks/useToast';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 
 export function DashboardView() {
   const [searchQuery] = useState('');
   const [statusFilter] = useState<Mission['status'] | 'all'>('all');
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [missionToDelete, setMissionToDelete] = useState<{ id: string; title: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const toast = useToast();
 
   const {
     missions,
@@ -68,10 +74,30 @@ export function DashboardView() {
     setCurrentView('create-mission');
   };
 
-  const handleDeleteMission = (id: string) => {
-    if (confirm('Are you sure you want to delete this mission?')) {
-      deleteMission(id);
+  const handleDeleteMission = (id: string, title: string) => {
+    setMissionToDelete({ id, title });
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!missionToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      await deleteMission(missionToDelete.id, missionToDelete.title);
+      setShowDeleteDialog(false);
+      setMissionToDelete(null);
+    } catch (error) {
+      console.error('Failed to delete mission:', error);
+      toast.error('Failed to delete mission. Please try again.');
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteDialog(false);
+    setMissionToDelete(null);
   };
 
   const handleStatusChange = (id: string, status: Mission['status']) => {
@@ -174,7 +200,7 @@ export function DashboardView() {
                 mission={mission}
                 progressCount={getProgressCount(mission.id)}
                 onEdit={handleEditMission}
-                onDelete={handleDeleteMission}
+                onDelete={(id) => handleDeleteMission(id, mission.title)}
                 onViewDetails={handleViewMission}
                 onStatusChange={handleStatusChange}
               />
@@ -191,6 +217,19 @@ export function DashboardView() {
         <Plus className="h-4 w-4" />
         New Mission
       </button>
+
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Delete Mission"
+        message={`Are you sure you want to delete "${missionToDelete?.title || 'this mission'}"? This action cannot be undone.`}
+        confirmText="Delete Mission"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={isDeleting}
+        closeOnConfirm={false}
+      />
     </div>
   );
 }
