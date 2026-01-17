@@ -1,12 +1,12 @@
 import { ArrowLeft, Edit, Trash2, Calendar, Clock } from 'lucide-react';
 import type { Mission } from '../types';
-import { useMissionStore, useMissionProgress } from '../store/missionStore';
+import { useMissionStore } from '../store/missionStore';
 import { ProgressTimeline } from '../components/Progress/ProgressTimeline';
 import { ProgressForm } from '../components/Progress/ProgressForm';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { useToast } from '../hooks/useToast';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 interface MissionDetailViewProps {
   missionId: string;
@@ -23,15 +23,24 @@ export function MissionDetailView({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   
-  const mission = useMissionStore((state) => 
-    state.missions.find(m => m.id === missionId)
-  );
-  const progressUpdates = useMissionProgress(missionId);
-  const { updateMission, deleteMission, addProgressUpdate } = useMissionStore();
+  const store = useMissionStore();
+  const mission = store.missions.find(m => m.id === missionId);
+  const progressUpdates = store.progressUpdates[missionId] || [];
+  const updateMission = store.updateMission;
+  const deleteMission = store.deleteMission;
+  const addProgressUpdate = store.addProgressUpdate;
 
-  const handleStatusChange = (status: Mission['status']) => {
-    updateMission(missionId, { status });
-  };
+  const handleStatusChange = useCallback((status: Mission['status']) => {
+    // Only update if status is actually different and mission exists
+    if (!mission || mission.status === status) {
+      return;
+    }
+    
+    // Use a timeout to break any potential synchronous update loops
+    setTimeout(() => {
+      updateMission(missionId, { status });
+    }, 0);
+  }, [mission?.id, mission?.status, updateMission]);
 
   const handleDelete = async () => {
     setShowDeleteDialog(true);

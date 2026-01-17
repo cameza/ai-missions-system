@@ -39,7 +39,8 @@ export function CreateMissionModal({ onClose }: CreateMissionModalProps) {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting, isDirty },
+    watch,
+    formState: { errors, isSubmitting },
   } = useForm<CreateMissionFormData>({
     resolver: zodResolver(createMissionSchema),
     defaultValues: {
@@ -86,7 +87,7 @@ export function CreateMissionModal({ onClose }: CreateMissionModalProps) {
         aria-hidden="true"
       />
 
-      <div className="relative w-full max-w-[560px] flex flex-col bg-white rounded-2xl shadow-2xl border border-white/60 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-[560px] flex flex-col bg-white rounded-2xl shadow-2xl border border-white/60 animate-in fade-in zoom-in-95 duration-200">
         <div className="px-8 pt-8 pb-6">
           <div className="flex flex-wrap justify-between items-start gap-4">
             <div className="flex flex-col gap-1">
@@ -184,11 +185,11 @@ export function CreateMissionModal({ onClose }: CreateMissionModalProps) {
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || (!editingMission && !isDirty)}
+              disabled={isSubmitting || (!editingMission && !watch('title').trim())}
               className="
-                inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-white
-                shadow-lg shadow-primary/25 transition-all hover:bg-primary-700 hover:shadow-primary/40
-                active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
+                inline-flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-semibold text-white
+                shadow-lg shadow-blue-600/25 transition-all hover:bg-blue-700 hover:shadow-blue-600/40
+                active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2
                 disabled:cursor-not-allowed disabled:opacity-70
               "
             >

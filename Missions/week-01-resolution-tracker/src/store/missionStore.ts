@@ -49,7 +49,7 @@ export const useMissionStore = create<MissionStore>()(
           
           // Check for storage quota issues
           if (storageService.isStorageNearCapacity()) {
-            toastService.storageQuotaWarning();
+            // toastService.storageQuotaWarning(); // Temporarily disabled
           }
           
           set({
@@ -59,8 +59,7 @@ export const useMissionStore = create<MissionStore>()(
           });
         } catch (error) {
           console.error('Failed to load from storage:', error);
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-          toastService.storageError(errorMessage);
+          // toastService.storageError(error instanceof Error ? error.message : 'Unknown error'); // Temporarily disabled
           // Use initial state on load failure
           set({
             missions: [],
@@ -70,8 +69,10 @@ export const useMissionStore = create<MissionStore>()(
         }
       };
 
-      // Load initial data on store creation
-      loadFromStorage();
+      // Load initial data asynchronously after store creation
+      setTimeout(() => {
+        loadFromStorage();
+      }, 0);
       
       return {
         // Initial State
@@ -100,7 +101,6 @@ export const useMissionStore = create<MissionStore>()(
             console.error('Failed to save to storage:', error);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             toastService.storageError(errorMessage);
-            set({ error: 'Failed to save data to storage' });
           }
         },
         
@@ -171,7 +171,7 @@ export const useMissionStore = create<MissionStore>()(
             
             // Show success toast if title provided
             if (title) {
-              toastService.missionDeleted(title);
+              // toastService.missionDeleted(title); // Temporarily disabled
             }
           } catch (error) {
             toastService.error('Failed to delete mission');

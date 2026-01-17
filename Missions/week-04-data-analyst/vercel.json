@@ -1,0 +1,17 @@
+{
+  "crons": [
+    {
+      "path": "/api/sync/transfers",
+      "schedule": "0 6,12,18,0 * * *"
+    },
+    {
+      "path": "/api/sync/transfers/deadline",
+      "schedule": "*/30 * * * *"
+    }
+  ],
+  "env": {
+    "DEADLINE_DAY_MODE": "false",
+    "MANUAL_SYNC_TOKEN": "your_manual_sync_token_here",
+    "ENABLE_DEADLINE_CRON": "false"
+  }
+}

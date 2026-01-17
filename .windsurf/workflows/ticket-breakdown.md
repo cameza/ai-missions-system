@@ -62,13 +62,33 @@ This workflow guides the TPM through breaking down a mission into executable Lin
 - Performance optimization
 - Deployment and documentation
 
-**Assign rough timeline to each phase:**
-- Phase 1: X hours
-- Phase 2: Y hours
-- Phase 3: Z hours
-- Phase 4: W hours
 
 ## Step 3: Create Foundation Tickets (30 minutes)
+
+### **CRITICAL: Linear Project Linking Requirements**
+
+**Before creating any tickets, ensure proper project association:**
+
+```javascript
+// REQUIRED PARAMETERS for Linear ticket creation:
+create_issue({
+  teamId: "TEAM_ID_HERE",           // Team assignment (e.g., TheMCs)
+  projectId: "PROJECT_ID_HERE",     // Project association (REQUIRED!)
+  title: "Ticket Title",
+  description: "Ticket description..."
+})
+```
+
+**Common IDs for Reference:**
+- Team ID: `37fafead-f20a-4801-b779-14ab17b79931` (TheMCs)
+- Mission 4 Project ID: `4aa97283-d42e-4ad3-9798-9ec0543fd554`
+
+**Verification Steps:**
+1. Always include BOTH `teamId` AND `projectId` parameters
+2. Check that issues appear in correct project after creation
+3. Test with single ticket before bulk creation
+4. Use project-specific IDs from Linear API guide
+
 **Setup & Configuration tickets:**
 
 ```markdown
@@ -570,11 +590,6 @@ Dependencies: Deployment to Vercel
 5. Set dependencies (blocks/blocked by)
 6. Assign to team members (if applicable)
 
-**Set up project views:**
-- **Kanban board**: Backlog → Todo → In Progress → In Review → Done
-- **Timeline view**: Visualize dependencies and phases
-- **Priority view**: Focus on urgent/high priority items
-
 **Create milestones:**
 - Milestone 1: Foundation Complete
 - Milestone 2: Core Features Complete
@@ -607,68 +622,6 @@ Project Setup
                 → Deployment
 ```
 
-## Step 11: Estimate Timeline (20 minutes)
-**Calculate total effort:**
-- Sum all ticket estimates
-- Add 20-30% buffer for unknowns
-- Consider parallel work opportunities
-
-**Create timeline:**
-- Week 1, Day 1-2: Foundation
-- Week 1, Day 3-5: Core Features (parallel work)
-- Week 2, Day 1-2: Polish & Enhancement
-- Week 2, Day 3-4: Quality & Testing
-- Week 2, Day 5: Deployment & Documentation
-
-**Identify risks to timeline:**
-- Technical unknowns
-- Dependency bottlenecks
-- External dependencies
-- Scope creep potential
-
-## Step 12: Review with Team (30 minutes)
-**Share breakdown with PM:**
-- Does this cover all PRD requirements?
-- Is the timeline realistic?
-- Are priorities aligned?
-- Any missing tickets?
-
-**Share breakdown with Tech Lead:**
-- Are estimates reasonable?
-- Are dependencies correct?
-- Any technical risks?
-- Any missing technical tasks?
-
-**Share breakdown with Designer:**
-- Are design dependencies clear?
-- Is implementation order logical?
-- Any design blockers?
-
-**Iterate based on feedback:**
-- Adjust priorities
-- Add missing tickets
-- Update estimates
-- Clarify dependencies
-
-## Step 13: Kickoff Meeting (30 minutes)
-**Present breakdown to team:**
-- Overview of phases
-- Timeline and milestones
-- Critical path
-- Dependencies
-- Risks and mitigations
-
-**Assign initial tickets:**
-- Start with foundation tickets
-- Assign based on expertise
-- Ensure no blockers
-
-**Set up communication:**
-- Daily standups (if applicable)
-- Progress tracking in Linear
-- Blocker escalation process
-- Definition of done
-
 ## Quality Checklist
 Before starting implementation:
 - [ ] All PRD requirements have corresponding tickets
@@ -692,6 +645,46 @@ Before starting implementation:
 - ❌ No testing tickets: Quality is not optional
 - ❌ Unclear priorities: Everything can't be P0
 - ❌ No documentation: Include doc tickets
+- ❌ **CRITICAL: Missing Project Association**: Always include both `teamId` AND `projectId` when creating Linear tickets
+
+## Linear Integration Best Practices
+
+### **Project Linking Requirements**
+Always ensure tickets are properly associated with the correct Linear project:
+
+```javascript
+// CORRECT - Always include both parameters:
+create_issue({
+  teamId: "37fafead-f20a-4801-b779-14ab17b79931",      // TheMCs team
+  projectId: "4aa97283-d42e-4ad3-9798-9ec0543fd554",   // Specific project ID
+  title: "Ticket Title",
+  description: "Ticket description..."
+})
+
+// INCORRECT - Missing projectId:
+create_issue({
+  teamId: "37fafead-f20a-4801-b779-14ab17b79931",      // Only teamId
+  title: "Ticket Title", 
+  description: "Ticket description..."
+})
+```
+
+### **Verification Process**
+1. **Test First**: Create one test ticket before bulk creation
+2. **Verify Association**: Check the ticket appears in the correct project
+3. **Validate Parameters**: Ensure both `teamId` and `projectId` are included
+4. **Reference Documentation**: Use project-specific IDs from Linear API guide
+
+### **Common Project IDs**
+- **Team ID**: `37fafead-f20a-4801-b779-14ab17b79931` (TheMCs)
+- **Mission Projects**: Check Linear API guide for current project IDs
+- **Project Lookup**: Use Linear interface to verify correct project IDs
+
+### **Error Prevention**
+- Create a ticket creation template/checklist
+- Double-check parameters before execution
+- Test with single tickets before bulk operations
+- Verify project association immediately after creation
 
 ## Tips for Great Ticket Breakdowns
 - ✅ Each ticket should be completable in <1 day

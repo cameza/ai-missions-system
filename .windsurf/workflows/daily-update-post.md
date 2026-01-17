@@ -4,7 +4,7 @@ This workflow handles posting drafted daily project updates to Linear using the 
 
 ## Prerequisites
 - Completed daily update draft from `daily-update: Draft` workflow
-- Linear API MCP server configured and working
+- **Custom Linear API MCP server** configured and working (NOT official Linear MCP server)
 - Access to Linear project with proper permissions
 - Approved update content ready for posting
 
@@ -87,25 +87,22 @@ Progress % | Health Status
 
 ## Step 3: Post Update to Linear (2 minutes)
 
-**Use Linear API MCP server to create project update:**
+**Use Custom Linear API MCP server to create project update:**
 
 ```bash
-# Basic format
-Create a project update for the "[Project Name]" project with the following content:
-
-[Your markdown content here]
-
-# With health status
-Create a project update for the "[Project Name]" project with health "[health_status]" and the following content:
-
-[Your markdown content here]
+# MCP tool call format (NOT natural language)
+mcp1_create_project_update
+  projectId: "8fefdb2a-c7e6-48ed-95e2-f8a1d848c5dc"
+  body: "[Your markdown content here]"
+  health: "onTrack"  # Optional: onTrack, atRisk, offTrack
 ```
 
 **For Week 1 Resolution Tracker:**
 ```bash
-Create a project update for the "Mission 1: Resolution Tracker" project with health "onTrack" and the following content:
-
-# Week 1 Resolution Tracker - Daily Progress Update
+mcp1_create_project_update
+  projectId: "8fefdb2a-c7e6-48ed-95e2-f8a1d848c5dc"
+  health: "onTrack"
+  body: "# Week 1 Resolution Tracker - Daily Progress Update
 
 ## ✅ COMPLETED Issues Today (4 tickets)
 
@@ -140,7 +137,7 @@ Create a project update for the "Mission 1: Resolution Tracker" project with hea
 **Risk**: No blockers - foundation is solid and ready for final features
 **Timeline**: Significantly ahead of schedule - 57% of project complete
 
-**Recommendation**: Focus on completing the final core feature (Mission Detail View) to achieve full MVP functionality. The project is in excellent position with strong foundation and nearly complete feature set.
+**Recommendation**: Focus on completing the final core feature (Mission Detail View) to achieve full MVP functionality. The project is in excellent position with strong foundation and nearly complete feature set."
 ```
 
 ## Step 4: Verify Update Posted (2 minutes)
@@ -180,8 +177,8 @@ Create a project update for the "Mission 1: Resolution Tracker" project with hea
 // Script to post daily update to Linear
 async function postDailyUpdate(updateContent: string, healthStatus: string) {
   try {
-    // Post to Linear using MCP
-    const result = await mcp2_create_project_update({
+    // Post to Linear using Custom MCP API server
+    const result = await mcp1_create_project_update({
       projectId: "8fefdb2a-c7e6-48ed-95e2-f8a1d848c5dc", // Week 1 Resolution Tracker
       body: updateContent,
       health: healthStatus
@@ -309,5 +306,5 @@ await postDailyUpdate(updateContent, healthStatus);
 **Workflow Duration:** 15-20 minutes
 **Frequency:** Daily (after draft workflow)
 **Owner:** TPM or Project Manager
-**Required Tools**: Linear API MCP server, Linear project access
+**Required Tools**: **Custom Linear API MCP server** (linear-api), Linear project access
 **Dependencies**: `daily-update: Draft` workflow completion
