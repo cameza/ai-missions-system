@@ -359,6 +359,7 @@ export class TransferService {
         transferType,
         transferValueUsd,
         transferValueDisplay: formatTransferValue(transferValueUsd),
+        status: 'done', // Default to done for API transfers
         transferDate,
         window: determineTransferWindow(transferDate),
         apiTransferId: apiTransfer.id,

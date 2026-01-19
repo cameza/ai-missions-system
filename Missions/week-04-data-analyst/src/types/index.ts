@@ -37,6 +37,12 @@ export type LeagueType = 'League' | 'Cup';
 export type TransferWindow = `${number}-${'winter' | 'summer'}`;
 
 /**
+ * Transfer status enumeration
+ * Represents the status of a transfer.
+ */
+export type TransferStatus = 'done' | 'pending' | 'rumour';
+
+/**
  * Core Transfer entity interface
  * Contains all required fields per tech spec, including denormalized display fields
  * for UI tables without extra joins.
@@ -84,6 +90,8 @@ export interface Transfer {
   transferValueUsd?: number;
   /** Display-formatted transfer value ("€50M", "FREE", "UNDISCLOSED") */
   transferValueDisplay: string;
+  /** Transfer status (required) */
+  status: TransferStatus;
   /** Transfer date (required) */
   transferDate: Date;
   
@@ -379,6 +387,58 @@ export const TransferFiltersSchema = z.object({
 });
 
 /**
+ * Zod schema for TopTransfer
+ */
+export const TopTransferSchema = z.object({
+  id: z.string().uuid(),
+  rank: z.number().min(1),
+  playerName: z.string().min(1),
+  fromClub: z.string().min(1),
+  toClub: z.string().min(1),
+  transferValue: z.string().min(1),
+  transferValueUsd: z.number().min(0).optional(),
+  transferDate: z.date(),
+});
+
+/**
+ * Zod schema for TransfersResponse
+ */
+export const TransfersResponseSchema = z.object({
+  data: z.array(TransferSchema),
+  total: z.number().min(0),
+  page: z.number().min(1),
+  limit: z.number().min(1),
+  hasMore: z.boolean(),
+});
+
+/**
+ * Zod schema for TopTransfersResponse
+ */
+export const TopTransfersResponseSchema = z.object({
+  data: z.array(TopTransferSchema),
+  window: z.string(),
+  totalInWindow: z.number().min(0),
+});
+
+/**
+ * Zod schema for SummaryData
+ */
+export const SummaryDataSchema = z.object({
+  todayCount: z.number().min(0),
+  windowTotal: z.number().min(0),
+  totalSpend: z.number().min(0),
+  mostActiveTeam: z.object({
+    name: z.string(),
+    transfers: z.number().min(0),
+    logo: z.string().url().optional(),
+  }),
+  averageDailyTransfers: z.number().min(0),
+  windowType: z.enum(['SUMMER', 'WINTER', 'MID-SEASON']),
+  isRecordHigh: z.boolean(),
+  lastUpdated: z.string(),
+});
+
+/**
  * Type guard functions using Zod schemas
  * These provide runtime validation that matches compile-time types.
  */
@@ -545,3 +605,139 @@ export type CreateLeague = EntityWithoutMetadata<League>;
 export type UpdateTransfer = Partial<EntityWithoutMetadata<Transfer>>;
 export type UpdateClub = Partial<EntityWithoutMetadata<Club>>;
 export type UpdateLeague = Partial<EntityWithoutMetadata<League>>;
+
+// ============================================================================
+// API RESPONSE TYPES
+// ============================================================================
+
+/**
+ * Query parameters for transfers API endpoint
+ */
+export interface TransfersQueryParams {
+  /** Search term for player names */
+  search?: string;
+  /** League IDs to filter by */
+  leagues?: string[];
+  /** Player positions to filter by */
+  positions?: PlayerPosition[];
+  /** Transfer types to filter by */
+  transferTypes?: TransferType[];
+  /** Age range filter [min, max] */
+  ageRange?: [number, number];
+  /** Value range filter [min, max] in USD cents */
+  valueRange?: [number, number];
+  /** Date range filter [start, end] */
+  dateRange?: [string, string];
+  /** Status filter */
+  status?: 'all' | 'confirmed' | 'rumours';
+  /** Pagination limit */
+  limit?: number;
+  /** Pagination offset */
+  offset?: number;
+  /** Sort field */
+  sort?: 'date' | 'value' | 'playerName';
+  /** Sort direction */
+  order?: 'asc' | 'desc';
+}
+
+/**
+ * Response from transfers API endpoint
+ */
+export interface TransfersResponse {
+  /** Array of transfer data */
+  data: Transfer[];
+  /** Total count of transfers matching filters */
+  total: number;
+  /** Current page number */
+  page: number;
+  /** Number of transfers per page */
+  limit: number;
+  /** Whether there are more pages */
+  hasMore: boolean;
+}
+
+/**
+ * Query parameters for top transfers API endpoint
+ */
+export interface TopTransfersQueryParams {
+  /** Transfer window filter */
+  window?: string;
+  /** Number of results to return */
+  limit?: number;
+  /** League filter */
+  league?: string;
+}
+
+/**
+ * Top transfer data with ranking
+ */
+export interface TopTransfer {
+  /** Transfer ID */
+  id: string;
+  /** Rank in top list */
+  rank: number;
+  /** Player name */
+  playerName: string;
+  /** From club name */
+  fromClub: string;
+  /** To club name */
+  toClub: string;
+  /** Display-formatted transfer value */
+  transferValue: string;
+  /** Transfer value in USD cents */
+  transferValueUsd?: number;
+  /** Transfer date */
+  transferDate: Date;
+}
+
+/**
+ * Response from top transfers API endpoint
+ */
+export interface TopTransfersResponse {
+  /** Array of top transfer data */
+  data: TopTransfer[];
+  /** Window identifier */
+  window: string;
+  /** Total number of transfers in window */
+  totalInWindow: number;
+}
+
+/**
+ * Summary data for dashboard
+ */
+export interface SummaryData {
+  /** Today's transfer count */
+  todayCount: number;
+  /** Total transfers in current window */
+  windowTotal: number;
+  /** Total spend in current window (USD cents) */
+  totalSpend: number;
+  /** Most active team data */
+  mostActiveTeam: {
+    name: string;
+    transfers: number;
+    logo?: string;
+  };
+  /** Average daily transfers */
+  averageDailyTransfers: number;
+  /** Current window type */
+  windowType: 'SUMMER' | 'WINTER' | 'MID-SEASON';
+  /** Whether this is a record high spend */
+  isRecordHigh: boolean;
+  /** Last updated timestamp */
+  lastUpdated: string;
+}
+
+/**
+ * API Error class for structured error handling
+ */
+export class APIError extends Error {
+  constructor(
+    public status: number,
+    public message: string,
+    public details?: any
+  ) {
+    super(message);
+    this.name = 'APIError';
+  }
+}
