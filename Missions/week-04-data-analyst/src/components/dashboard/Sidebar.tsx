@@ -6,6 +6,7 @@ import { SidebarLoadingState, SidebarEmptyState, SidebarErrorState } from "./Sid
 import { SidebarErrorBoundary } from "./SidebarErrorBoundary"
 import { useTopTransfersQuery } from "@/hooks/useTopTransfers"
 import type { TopTransfer } from "@/hooks/useTopTransfers"
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 
 interface SidebarProps {
   className?: string
@@ -39,34 +40,54 @@ export function Sidebar({ className = "" }: SidebarProps) {
   ]
 
   return (
-    <div 
-      className={`bg-surface border-l border-surface-border flex flex-col ${className}`}
-      role="region"
-      aria-label="Top Transfers"
-    >
+    <TooltipProvider>
+      <div 
+        className={`bg-surface border-l border-surface-border flex flex-col ${className}`}
+        role="region"
+        aria-label="Top Transfers"
+      >
       {/* Tab Navigation */}
       <div className="border-b border-surface-border">
         <div className="flex" role="tablist">
           {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              role="tab"
-              aria-selected={tab.active}
-              aria-disabled={tab.disabled}
-              disabled={tab.disabled}
-              onClick={() => !tab.disabled && setActiveTab(tab.id)}
-              className={`
-                flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-200
-                ${tab.active 
-                  ? 'text-primary border-b-2 border-primary' 
-                  : tab.disabled
-                    ? 'text-text-tertiary cursor-not-allowed'
-                    : 'text-text-secondary hover:text-foreground hover:bg-surface-hover'
-                }
-              `}
-            >
-              {tab.label}
-            </button>
+            tab.disabled ? (
+              <Tooltip key={tab.id}>
+                <TooltipTrigger asChild>
+                  <button
+                    role="tab"
+                    aria-selected={false}
+                    aria-disabled={true}
+                    onClick={(e) => e.preventDefault()}
+                    className="flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wider text-text-tertiary cursor-not-allowed"
+                  >
+                    {tab.label}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="bg-gray-800 text-white text-xs px-3 py-2 rounded">
+                  Coming in Full MVP (Summer 2025)
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <button
+                key={tab.id}
+                role="tab"
+                aria-selected={tab.active}
+                aria-disabled={tab.disabled}
+                disabled={tab.disabled}
+                onClick={() => !tab.disabled && setActiveTab(tab.id)}
+                className={`
+                  flex-1 px-3 py-3 text-xs font-bold uppercase tracking-wider transition-all duration-200
+                  ${tab.active 
+                    ? 'text-primary border-b-2 border-primary' 
+                    : tab.disabled
+                      ? 'text-text-tertiary cursor-not-allowed'
+                      : 'text-text-secondary hover:text-foreground hover:bg-surface-hover'
+                  }
+                `}
+              >
+                {tab.label}
+              </button>
+            )
           ))}
         </div>
       </div>
@@ -98,22 +119,7 @@ export function Sidebar({ className = "" }: SidebarProps) {
         </SidebarErrorBoundary>
       </div>
 
-      {/* Custom scrollbar styles */}
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.2);
-          border-radius: 2px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.3);
-        }
-      `}</style>
     </div>
+    </TooltipProvider>
   )
 }

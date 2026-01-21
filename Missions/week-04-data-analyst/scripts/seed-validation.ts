@@ -49,9 +49,9 @@ class ValidationSeedService extends SeedService {
       const clubsCount = await this.seedClubs(premierLeague.id, premierLeague.name);
       console.log(`✅ Seeded ${clubsCount} clubs`);
 
-      // Phase 3: Seed Premier League transfers
-      console.log('\n🔄 Phase 3: Seeding Premier League transfers...');
-      const transfersCount = await this.seedTransfers(premierLeague.id, premierLeague.name);
+      // Phase 3: Seed transfers via CSV ingestion
+      console.log('\n🔄 Phase 3: Seeding transfers from Transfermarkt CSV...');
+      const transfersCount = await this.seedTransfersFromCsv();
       console.log(`✅ Seeded ${transfersCount} transfers`);
 
       // Validation queries

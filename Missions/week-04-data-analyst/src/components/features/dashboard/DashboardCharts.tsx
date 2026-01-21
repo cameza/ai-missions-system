@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import { ChartSkeleton } from "./charts";
+import { useTransfersByLeague, useTopTeamsVolume, useDailyActivity } from "@/hooks/use-analytics";
 
 // Lazy load charts for performance optimization
 const TransfersByLeagueChart = dynamic(
@@ -29,50 +30,41 @@ const DailyActivityChart = dynamic(
   }
 );
 
-// Mock data for development
-const mockTransfersByLeague = [
-  { league: "Premier League", transfers: 145 },
-  { league: "La Liga", transfers: 98 },
-  { league: "Serie A", transfers: 87 },
-  { league: "Bundesliga", transfers: 76 },
-  { league: "Ligue 1", transfers: 65 },
-];
-
-const mockTopTeamsVolume = [
-  { team: "Chelsea", volume: 28 },
-  { team: "Liverpool", volume: 24 },
-  { team: "Man United", volume: 22 },
-  { team: "Arsenal", volume: 19 },
-  { team: "Man City", volume: 18 },
-];
-
-const mockDailyActivity = [
-  { date: "Jan 14", activity: 12 },
-  { date: "Jan 15", activity: 28 },
-  { date: "Jan 16", activity: 45 },
-  { date: "Jan 17", activity: 38 },
-  { date: "Jan 18", activity: 52 },
-  { date: "Jan 19", activity: 67 },
-];
 
 export function DashboardCharts() {
+  const { data: leagueData, isLoading: leagueLoading, error: leagueError } = useTransfersByLeague();
+  const { data: teamsData, isLoading: teamsLoading, error: teamsError } = useTopTeamsVolume();
+  const { data: dailyData, isLoading: dailyLoading, error: dailyError } = useDailyActivity();
+
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      <div className="lg:col-span-1">
+    <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="col-span-1">
         <Suspense fallback={<ChartSkeleton />}>
-          <TransfersByLeagueChart data={mockTransfersByLeague} />
+          <TransfersByLeagueChart 
+            data={leagueData || []} 
+            isLoading={leagueLoading}
+            error={leagueError?.message}
+          />
         </Suspense>
       </div>
       
-      <div className="lg:col-span-1">
+      <div className="col-span-1">
         <Suspense fallback={<ChartSkeleton />}>
-          <TopTeamsVolumeChart data={mockTopTeamsVolume} />
+          <TopTeamsVolumeChart 
+            data={teamsData || []} 
+            isLoading={teamsLoading}
+            error={teamsError?.message}
+          />
         </Suspense>
       </div>
       
-      <div className="lg:col-span-2">
+      <div className="col-span-1">
         <Suspense fallback={<ChartSkeleton />}>
-          <DailyActivityChart data={mockDailyActivity} />
+          <DailyActivityChart 
+            data={dailyData || []} 
+            isLoading={dailyLoading}
+            error={dailyError?.message}
+          />
         </Suspense>
       </div>
     </div>

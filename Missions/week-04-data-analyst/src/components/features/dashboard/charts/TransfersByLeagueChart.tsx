@@ -18,7 +18,7 @@ interface TransfersByLeagueChartProps {
 
 const CHART_COLORS = {
   primary: "#8B5CF6", // Electric Purple
-  secondary: "#3B82F6", // Bright Blue
+  secondary: "#00FF88", // Neon Green
   grid: "#2A2A35", // Subtle grid
 };
 

@@ -28,7 +28,7 @@ describe("Header Component", () => {
     expect(screen.getByRole("banner")).toBeInTheDocument()
     
     // Check for ARIA labels
-    expect(screen.getByRole("searchbox")).toBeInTheDocument()
+    expect(screen.getAllByRole("searchbox").length).toBeGreaterThan(0)
   })
 
   it("shows mobile menu button on small screens", () => {
@@ -48,7 +48,7 @@ describe("Header Component", () => {
   it("handles search input changes", async () => {
     render(<Header />)
     
-    const searchInput = screen.getByPlaceholderText("Search transfers, players, teams...")
+    const searchInput = screen.getAllByPlaceholderText("Search transfers, players, teams...")[0]
     
     fireEvent.change(searchInput, { target: { value: "test search" } })
     
@@ -60,15 +60,15 @@ describe("Header Component", () => {
   it("handles search clear functionality", async () => {
     render(<Header />)
     
-    const searchInput = screen.getByPlaceholderText("Search transfers, players, teams...")
+    const searchInput = screen.getAllByPlaceholderText("Search transfers, players, teams...")[0]
     
     // Type something first
     fireEvent.change(searchInput, { target: { value: "test search" } })
     
     // Clear button should appear (if implemented)
-    const clearButton = screen.queryByLabelText("Clear search")
-    if (clearButton) {
-      fireEvent.click(clearButton)
+    const clearButtons = screen.queryAllByLabelText("Clear search")
+    if (clearButtons.length > 0) {
+      fireEvent.click(clearButtons[0])
       await waitFor(() => {
         expect(searchInput).toHaveValue("")
       })

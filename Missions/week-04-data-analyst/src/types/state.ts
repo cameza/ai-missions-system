@@ -39,32 +39,32 @@ export interface UIState {
 // Transfer Entity Interface
 export interface Transfer {
   id: string;
-  playerId: number;
-  playerFirstName: string;
-  playerLastName: string;
-  playerFullName: string;
+  player_id: number;
+  player_first_name: string;
+  player_last_name: string;
+  player_full_name: string;
   age?: number;
   position?: string;
   nationality?: string;
   
-  fromClubId?: string;
-  toClubId?: string;
-  fromClubName: string;
-  toClubName: string;
+  from_club_id?: string;
+  to_club_id?: string;
+  from_club_name: string;
+  to_club_name: string;
   
-  leagueId?: string;
-  leagueName: string;
+  league_id?: string;
+  league_name: string;
   
-  transferType: TransferType;
-  transferValueUsd?: number;
-  transferValueDisplay: string;
-  transferDate: Date;
+  transfer_type: TransferType;
+  transfer_value_usd?: number;
+  transfer_value_display: string;
+  transfer_date: Date;
   
   window: string;
-  apiTransferId: number;
+  api_transfer_id: number;
   
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 
 // Transfer Summary for Dashboard

@@ -344,18 +344,35 @@ Given the current date (January 16, 2025) and next window closing (February 2, 2
 
 ---
 
-#### 6.1.4 Basic Data Pipeline
+#### 6.1.4 Basic Data Pipeline (Updated)
 
 **Priority:** P0 (Must Have)
 
-**Requirements:**
+**Context + Constraint:**
 
-* Fetch transfer data from API-Football
-* Parse and normalize data
-* Store in Supabase database
-* Schedule: 3 updates per day (8am, 2pm, 8pm)
-* Manual trigger available for deadline day
-* Error logging and monitoring
+* The original plan depended on API-Football for real-time transfer ingestion. During the Jan 2026 window the free-tier endpoint stopped returning current deals (data lagged ~2 weeks), which failed the “<2 hour lag” KPI.
+* API-Football is still used for league + club metadata (stable historic data), but can no longer be trusted for transfers.
+
+**Pivot – Transfermarkt Scraping:**
+
+* Scrape https://www.transfermarkt.com/transfers/neuestetransfers/statistik/plus/… with cheerio.
+* Use the “Top 10 leagues” filter to expose the full window history (Jan 02 onward) and paginate 10 pages (25 rows each) → 250 confirmed moves.
+* Output normalized CSV to `Temp_Ref/latest-transfers-top10-pages-1-to-10.csv` (ENV `TRANSFERMARKT_TOP10=true`, `TRANSFERMARKT_PAGE_COUNT=10`).
+* `TRANSFER_CSV_PATH` env allows swapping the dataset (e.g., daily snapshots or future filters).
+
+**Requirements (new pipeline):**
+
+* Scraper cron every 8 hours (e.g., 02:00 / 10:00 / 18:00 UTC). Manual run available for deadline-day spikes.
+* Parse CSV via `scripts/seed.ts` (Papaparse) and upsert into Supabase:
+  * Split player names, map nationalities → ISO2 (i18n-iso-countries), infer windows (winter/summer).
+  * Resolve or auto-create clubs/leagues by name + country before inserting transfers.
+  * Store fee text + derived `transfer_value_usd` (cents) and mark everything as `status = 'done'` since Transfermarkt only lists confirmed deals.
+* Error logging + cache to avoid duplicate club creations during a run.
+
+**Monitoring:**
+
+* Log scrape + seed counts per run; emit warnings for rows skipped due to incomplete data (bad dates, missing clubs, etc.).
+* Manual validation checklist each morning (compare random sample vs Transfermarkt UI).
 
 ---
 
@@ -1168,32 +1185,38 @@ GROUP BY window, league_name;
 
 ---
 
-## 9\. API Integration
+## 9\. API & Data Integration
 
-### 9.1 API-Football Overview
+### 9.1 Hybrid Data Sources
 
-**Documentation:** https://www.api-football.com/documentation-v3
+| Domain | Source | Notes |
+| --- | --- | --- |
+| Transfers (real-time) | Transfermarkt scrape → CSV | Reliable confirmed deals for Top 10 leagues. Scraper controlled in `scripts/transfermarkt-scrape.ts`. |
+| Leagues & Clubs metadata | API-Football | Stable static info (IDs, venues, logos). Minimal requests keep us under free-tier quota. |
+| Future enrichment | TBD | Player bios, contract metadata may still use API-Football if accuracy improves, or another provider. |
 
-**Base URL:** `https://v3.football.api-sports.io/`
+### 9.2 Transfer Scraping Workflow
 
-**Authentication:** API key in request header
+1. **Scrape step**
+   * Run `TRANSFERMARKT_TOP10=true TRANSFERMARKT_PAGE_COUNT=10 npx tsx scripts/transfermarkt-scrape.ts`.
+   * Persist CSV into `Temp_Ref/latest-transfers-top10-pages-1-to-10.csv` (cron + manual trigger documented in ops runbook).
+2. **Seed step**
+   * `tsx scripts/seed.ts` ingests CSV, resolves clubs/leagues, upserts transfers.
+   * `TRANSFER_CSV_PATH` env variable allows pointing to alternate snapshots.
+3. **Schedule**
+   * Cron every 8 hours (matching Section 6.1.4) + manual run on deadline day.
+   * Alerts if scraper output count deviates ±10% vs previous run (guards against HTML changes).
 
-```
-x-rapidapi-key: YOUR_API_KEY
-x-rapidapi-host: v3.football.api-sports.io
-```
+### 9.3 Residual API Usage (API-Football)
 
-**Rate Limits:**
+* Endpoints retained: `GET /v3/leagues`, `GET /v3/teams` for metadata only.
+* Transfer endpoints removed from production workflow; only used for experimental enrichment.
+* Free-tier quota now largely unused (<30 req/day), giving buffer for diagnostics.
 
-* Free tier: 100 requests/day
-* Recommended tier for MVP: **Classic Plan** (3,000 requests/day)
-  * Cost: \~$15/month
-  * Sufficient for 4 pulls/day with room for manual refreshes
+### 9.4 Contingency Plan
 
-### 9.2 Key Endpoints
-
-#### Get Transfers
-
+* If Transfermarkt layout changes → scraper fails → fall back to last good CSV (seed script logs timestamp) and raise a P0 issue.
+* Long-term: evaluate dedicated data providers (Opta, SportMonks) once budget allows; keep scraper as safety net.
 ```
 GET /transfers
 ```

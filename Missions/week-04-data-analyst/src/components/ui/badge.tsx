@@ -52,7 +52,9 @@ export interface BadgeProps
 
 const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, variant, ...props }, ref) => {
-    const ariaLabel = variant ? `${variant} status` : "status badge"
+    // Use default variant if none provided
+    const badgeVariant = variant || 'outline'
+    const ariaLabel = `${badgeVariant} status`
     
     return (
       <div

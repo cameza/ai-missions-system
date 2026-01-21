@@ -11,7 +11,9 @@
  */
 
 import { z } from 'zod';
-import { Transfer, TransferType, TransferWindow, PlayerPosition, determineTransferWindow, formatTransferValue } from '../types';
+import { Transfer, TransferType, TransferWindow, PlayerPosition, formatTransferValue } from '../types';
+import { detectTransferWindow } from './utils/window-detection';
+import { getTeamIdsByLeague } from './config/team-mapping';
 
 // ============================================================================
 // API-FOOTBALL TYPES & SCHEMAS
@@ -68,8 +70,8 @@ export interface APIFootballTransfersResponse {
 export interface FetchTransfersParams {
   /** Season year (e.g., 2025) */
   season: number;
-  /** League IDs to fetch transfers for */
-  leagueIds: number[];
+  /** Team IDs to fetch transfers for */
+  teamIds: number[];
   /** Page number for pagination (optional) */
   page?: number;
 }
@@ -269,7 +271,7 @@ export class TransferService {
    * Fetch transfers from API-Football
    */
   async fetchTransfers(params: FetchTransfersParams): Promise<APIFootballTransfersResponse> {
-    const { season, leagueIds, page = 1 } = params;
+    const { season, teamIds, page = 1 } = params;
 
     // Check rate limits
     const rateLimit = this.rateLimiter.canMakeRequest();
@@ -285,9 +287,9 @@ export class TransferService {
     const url = new URL(`${this.baseUrl}/transfers`);
     url.searchParams.set('season', season.toString());
     
-    // Add league IDs (API supports multiple leagues)
-    if (leagueIds.length > 0) {
-      url.searchParams.set('league', leagueIds.join(','));
+    // Add team IDs (API supports multiple teams)
+    if (teamIds.length > 0) {
+      url.searchParams.set('team', teamIds.join(','));
     }
     
     url.searchParams.set('page', page.toString());
@@ -340,32 +342,35 @@ export class TransferService {
       // Parse transfer value
       const transferValueUsd = this.parseTransferValue(apiTransfer.amount);
       
-      // Create transfer object
-      const transfer: Transfer = {
-        id: '', // Will be set by database
-        playerId: apiTransfer.playerId,
-        playerFirstName: firstName,
-        playerLastName: lastName,
-        playerFullName: apiTransfer.playerName,
-        age: apiTransfer.playerAge,
-        position: this.mapPosition(apiTransfer.playerPosition),
-        nationality: apiTransfer.playerNationality,
-        fromClubId: '', // Will be resolved by database service
-        toClubId: '', // Will be resolved by database service
-        fromClubName: apiTransfer.fromClub.name,
-        toClubName: apiTransfer.toClub.name,
-        leagueId: '', // Will be resolved by database service
-        leagueName: apiTransfer.league.name,
-        transferType,
-        transferValueUsd,
-        transferValueDisplay: formatTransferValue(transferValueUsd),
-        status: 'done', // Default to done for API transfers
-        transferDate,
-        window: determineTransferWindow(transferDate),
-        apiTransferId: apiTransfer.id,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      // Map API league ID to internal league ID for window detection
+      const internalLeagueId = apiTransfer.league.id.toString(); // Use API ID directly for now
+        
+        // Create transfer object
+        const transfer: Transfer = {
+          id: '', // Will be set by database
+          playerId: apiTransfer.playerId,
+          playerFirstName: firstName,
+          playerLastName: lastName,
+          playerFullName: apiTransfer.playerName,
+          age: apiTransfer.playerAge,
+          position: this.mapPosition(apiTransfer.playerPosition),
+          nationality: apiTransfer.playerNationality,
+          fromClubId: '', // Will be resolved by database service
+          toClubId: '', // Will be resolved by database service
+          fromClubName: apiTransfer.fromClub.name,
+          toClubName: apiTransfer.toClub.name,
+          leagueId: '', // Will be resolved by database service
+          leagueName: apiTransfer.league.name,
+          transferType,
+          transferValueUsd,
+          transferValueDisplay: formatTransferValue(transferValueUsd),
+          status: 'done', // Default to done for API transfers
+          transferDate,
+          window: detectTransferWindow(transferDate, internalLeagueId),
+          apiTransferId: apiTransfer.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
 
       return transfer;
     } catch (error) {

@@ -25,10 +25,19 @@ describe('KPICard', () => {
 
   describe('Basic Rendering', () => {
     it('renders title and value correctly', () => {
-      render(<KPICard {...defaultProps} loading={false} error={false} />)
-      
-      expect(screen.getByText('Test Card')).toBeInTheDocument()
-      expect(screen.getByText('1234')).toBeInTheDocument()
+      console.log('Starting basic rendering test...');
+      try {
+        render(<KPICard {...defaultProps} loading={false} error={false} />)
+        console.log('Render completed successfully');
+        console.log('Document body:', document.body.innerHTML);
+        
+        expect(screen.getByText('Test Card')).toBeInTheDocument()
+        expect(screen.getByText('1234')).toBeInTheDocument()
+      } catch (error) {
+        console.error('Render failed:', error);
+        console.log('Document body on error:', document.body.innerHTML);
+        throw error;
+      }
     })
 
     it('renders with trend and change metric', () => {
@@ -98,8 +107,8 @@ describe('KPICard', () => {
       expect(screen.queryByText('Test Card')).not.toBeInTheDocument()
       expect(screen.queryByText('1234')).not.toBeInTheDocument()
       
-      // Should have skeleton elements
-      const skeletons = document.querySelectorAll('[class*="skeleton"]')
+      // Should have skeleton elements (using animate-pulse class)
+      const skeletons = document.querySelectorAll('[class*="animate-pulse"]')
       expect(skeletons.length).toBeGreaterThan(0)
     })
 

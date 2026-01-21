@@ -12,18 +12,26 @@ export interface TopTransfer {
   transferValueUsd?: number
 }
 
-export const useTopTransfersQuery = () => {
+export const useTopTransfersQuery = (initialData?: TopTransfer[]) => {
   return useQuery({
-    queryKey: ['top-transfers'],
+    queryKey: ['top-transfers', Date.now()], // Add timestamp for cache busting
     queryFn: async (): Promise<TopTransfer[]> => {
-      const response = await fetch('/api/top-transfers')
+      const response = await fetch('/api/top-transfers?v=' + Date.now()) // Add version parameter
       if (!response.ok) {
         throw new Error('Failed to fetch top transfers')
       }
-      return response.json()
+      const result = await response.json()
+      // Handle API response structure: {success: true, data: {data: [...], window: "...", totalInWindow: N}}
+      console.log('API Response:', result) // Debug log
+      if (result.success && result.data && result.data.data) {
+        return result.data.data // Extract the inner data array
+      }
+      // Fallback for old format or direct array
+      return result.data || result || []
     },
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    refetchInterval: 15 * 60 * 1000, // 15 minutes
+    initialData: initialData || undefined,
+    staleTime: 0, // Force immediate refresh
+    refetchInterval: 5 * 60 * 1000, // 5 minutes
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   })

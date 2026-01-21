@@ -1,6 +1,4 @@
--- Create leagues table
--- Migration: create_leagues_table
--- Version: 20260117192135
+-- NOTE: intentionally lean schema; additional API-specific columns are NOT present.
 
 CREATE TABLE IF NOT EXISTS leagues (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

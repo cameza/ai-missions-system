@@ -1,8 +1,7 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from "recharts";
 import { ChartContainer } from "./ChartContainer";
-import { CustomTooltip } from "./CustomTooltip";
+import { cn } from "@/lib/utils";
 
 interface TopTeamsVolumeData {
   team: string;
@@ -16,11 +15,10 @@ interface TopTeamsVolumeChartProps {
   className?: string;
 }
 
-const CHART_COLORS = {
-  primary: "#8B5CF6", // Electric Purple
-  secondary: "#3B82F6", // Bright Blue
-  grid: "#2A2A35", // Subtle grid
-};
+const COLORS = [
+  "#00FF88", // Neon Green
+  "#8B5CF6", // Electric Purple
+];
 
 export function TopTeamsVolumeChart({
   data,
@@ -28,75 +26,48 @@ export function TopTeamsVolumeChart({
   error = null,
   className,
 }: TopTeamsVolumeChartProps) {
+  // Find the maximum volume to calculate percentages
+  const maxVolume = Math.max(...data.map((d) => d.volume), 0);
+
   return (
     <ChartContainer
-      title="Top Teams Volume"
+      title="TOP TEAMS VOLUME"
       isLoading={isLoading}
       error={error}
       className={className}
-      aspectRatio={16 / 9}
+      responsive={false}
+      headerAction={<span className="text-xs text-gray-500 font-mono">IN/OUT</span>}
     >
-      <BarChart
-        data={data}
-        layout="horizontal"
-        margin={{
-          top: 20,
-          right: 30,
-          left: 60,
-          bottom: 5,
-        }}
-        role="img"
-        aria-label="Top Teams Volume horizontal bar chart"
-      >
-        <CartesianGrid 
-          strokeDasharray="3 3" 
-          stroke={CHART_COLORS.grid}
-          opacity={0.3}
-        />
-        <XAxis
-          type="number"
-          tick={{
-            fill: "#9CA3AF",
-            fontSize: 10,
-            fontFamily: "monospace",
-          }}
-          axisLine={false}
-          tickLine={false}
-        />
-        <YAxis
-          type="category"
-          dataKey="team"
-          tick={{
-            fill: "#9CA3AF",
-            fontSize: 10,
-            fontFamily: "monospace",
-          }}
-          axisLine={false}
-          tickLine={false}
-          width={50}
-        />
-        <Tooltip
-          content={<CustomTooltip />}
-          cursor={{
-            fill: "rgba(139, 92, 246, 0.1)",
-            stroke: "#8B5CF6",
-            strokeWidth: 1,
-          }}
-        />
-        <Bar
-          dataKey="volume"
-          radius={[0, 4, 4, 0]}
-          animationDuration={800}
-          animationEasing="ease-out"
-        >
-          {data.map((entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={index % 2 === 0 ? CHART_COLORS.primary : CHART_COLORS.secondary}
-            />
-          ))}
-        </Bar>
-      </BarChart>
+      <div className="flex flex-col justify-between h-full py-2 space-y-4">
+        {data.map((item, index) => {
+          const percentage = maxVolume > 0 ? (item.volume / maxVolume) * 100 : 0;
+          // Alternate colors, starting with Green as per mockup
+          const color = COLORS[index % COLORS.length];
+          
+          return (
+            <div key={item.team} className="w-full group">
+              <div className="flex justify-between items-end mb-1.5">
+                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  {item.team}
+                </span>
+                <span className="text-sm font-bold text-white font-mono">
+                  {item.volume}
+                </span>
+              </div>
+              <div className="w-full bg-gray-800/30 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-1000 ease-out relative"
+                  style={{
+                    width: `${percentage}%`,
+                    backgroundColor: color,
+                    boxShadow: `0 0 10px ${color}40`
+                  }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </ChartContainer>
   );
 }

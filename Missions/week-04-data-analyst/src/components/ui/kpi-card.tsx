@@ -8,7 +8,7 @@
  * - Glassmorphism: backdrop-blur-sm with opacity
  * 
  * Props:
- * - title: Card title (12px/700 uppercase tracking-wider text-secondary)
+ * - title: Card title (12px/700 uppercase tracking-wider text-gray-300)
  * - value: Main value display (30px/900 italic white)
  * - change?: Optional change metric with trend
  * - trend?: "up" | "down" | "neutral" for color coding
@@ -71,8 +71,10 @@ const trendColors = {
 }
 
 const formatChange = (change: number, trend: "up" | "down" | "neutral") => {
+  // Handle floating point precision issues
+  const roundedChange = Math.round(Math.abs(parseFloat(change.toFixed(10))))
   const sign = trend === "up" ? "+" : trend === "down" ? "-" : ""
-  return `${sign}${Math.abs(change)}%`
+  return `${sign}${roundedChange}%`
 }
 
 const KPICard = React.forwardRef<HTMLDivElement, KPICardProps>(({ 
@@ -108,6 +110,8 @@ const KPICard = React.forwardRef<HTMLDivElement, KPICardProps>(({
           variant="glass"
           padding="default"
           className={cn(kpiCardVariants({ state: "loading" }), className)}
+          role="region"
+          aria-label={ariaLabel}
           {...cardProps}
         >
           <div className="space-y-3">
@@ -122,6 +126,7 @@ const KPICard = React.forwardRef<HTMLDivElement, KPICardProps>(({
           </div>
         </Card>
       )
+    }
 
     // Error state
     if (error) {
@@ -135,7 +140,7 @@ const KPICard = React.forwardRef<HTMLDivElement, KPICardProps>(({
         >
           <div className="space-y-3" role="region" aria-label={`${title} error`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-secondary">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-300">
                 {title}
               </h3>
               {icon}
@@ -164,10 +169,10 @@ const KPICard = React.forwardRef<HTMLDivElement, KPICardProps>(({
       <div className="space-y-3">
         {/* Header with title and icon */}
         <div className="flex items-center justify-between">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-secondary">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-300">
             {title}
           </h3>
-          {badge}
+          {icon}
         </div>
 
         {/* Main value display */}
@@ -203,12 +208,12 @@ const KPICard = React.forwardRef<HTMLDivElement, KPICardProps>(({
         className={cn(kpiCardVariants({ state: "default" }), className)}
         role="region"
         aria-label={ariaLabel}
+        aria-live="polite"
         {...cardProps}
       >
         {cardContent}
       </Card>
     )
-  }
 })
 
 KPICard.displayName = "KPICard"

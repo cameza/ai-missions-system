@@ -14,6 +14,7 @@
 import { z } from 'zod';
 import { Transfer, TransferSchema, DatabaseTransfer } from '../types';
 import { TransferService, SyncStrategy, FetchTransfersParams } from './transfer-service';
+import { getTeamIdsByLeague } from './config/team-mapping';
 
 // ============================================================================
 // SYNC CONFIGURATION & TYPES
@@ -343,7 +344,7 @@ export class SyncOrchestrator {
     // Fetch transfers from API
     const apiResponse = await this.transferService.fetchTransfers({
       season,
-      leagueIds: [league.apiLeagueId],
+      teamIds: this.getTeamIdsForLeague(league.apiLeagueId),
     });
 
     result.totalProcessed += apiResponse.response.length;
@@ -385,6 +386,31 @@ export class SyncOrchestrator {
       // Create new transfer
       await this.databaseService.createTransfer(transfer);
     }
+  }
+
+  /**
+   * Get team IDs for a specific league
+   */
+  private getTeamIdsForLeague(leagueId: number): number[] {
+    // Map league ID to internal league slug and get team IDs
+    const leagueSlugMap: Record<number, string> = {
+      39: 'premier-league',
+      140: 'la-liga', 
+      135: 'serie-a',
+      78: 'bundesliga',
+      61: 'ligue-1',
+      94: 'eredivisie',
+      106: 'primeira-liga',
+      60: 'serie-a', // Portuguese Serie A
+    };
+    
+    const leagueSlug = leagueSlugMap[leagueId];
+    if (!leagueSlug) {
+      console.warn(`No team mapping found for league ID: ${leagueId}`);
+      return [];
+    }
+    
+    return getTeamIdsByLeague(leagueSlug);
   }
 
   /**

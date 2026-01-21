@@ -10,6 +10,7 @@ import {
 import { validateQuery, SummaryQuerySchema, SummaryQueryParams } from '@/lib/api/validation';
 import { applyRateLimit } from '@/lib/api/rate-limit';
 import { createRequestHandler } from '@/lib/api/logger';
+import { resolveWindowContext } from '@/lib/utils/window-context';
 
 export const runtime = 'nodejs';
 
@@ -18,14 +19,13 @@ interface SummaryResponse {
   windowTotal: number;
   totalSpend: number;
   mostActiveTeam: {
-    id: string;
     name: string;
-    logoUrl?: string;
-    transferCount: number;
-  };
+    transfers: number;
+    logo?: string;
+  } | null;
   averageDailyTransfers: number;
-  recordHigh: boolean;
-  windowContext: 'MID-SEASON' | 'SUMMER' | 'WINTER';
+  isRecordHigh: boolean;
+  windowType: string;
 }
 
 async function handleSummary(req: NextRequest) {
@@ -45,9 +45,7 @@ async function handleSummary(req: NextRequest) {
 
     // Get current date and window context
     const today = new Date().toISOString().split('T')[0];
-    const currentMonth = new Date().getMonth();
-    const windowContext = currentMonth >= 6 && currentMonth <= 8 ? 'SUMMER' : 
-                        currentMonth >= 12 || currentMonth <= 1 ? 'WINTER' : 'MID-SEASON';
+    const windowContext = await resolveWindowContext(supabase);
 
     // Execute parallel queries for better performance
     const [
@@ -76,15 +74,10 @@ async function handleSummary(req: NextRequest) {
         .eq('window', windowContext)
         .not('transfer_value_usd', 'is', null),
       
-      // Most active team - get all transfers for current window
+      // Most active team - use denormalized club names (always populated)
       supabase
         .from('transfers')
-        .select(`
-          from_club_id,
-          to_club_id,
-          from_club:clubs!transfers_from_club_id_fkey(id, name, logo_url),
-          to_club:clubs!transfers_to_club_id_fkey(id, name, logo_url)
-        `)
+        .select('from_club_name, to_club_name')
         .eq('window', windowContext)
         .limit(1000),
       
@@ -106,41 +99,31 @@ async function handleSummary(req: NextRequest) {
     const totalSpend = spendResult.data?.reduce((sum: number, transfer: any) => 
       sum + (transfer.transfer_value_usd || 0), 0) || 0;
 
-    // Calculate average daily transfers
+    // Calculate average daily transfers with proper rounding
     const uniqueDays = new Set(averageResult.data?.map((t: any) => t.transfer_date)).size || 1;
-    const averageDailyTransfers = (averageResult.count || 0) / uniqueDays;
+    const averageDailyTransfers = Math.round(((averageResult.count || 0) / uniqueDays) * 100) / 100;
 
     // Check if this is a record high (simple threshold for demo)
     const recordHigh = totalSpend > 3000000000; // $3B threshold
 
-    // Calculate most active team
-    const teamCounts = new Map<string, { id: string; name: string; logoUrl?: string; count: number }>();
+    // Calculate most active team using denormalized club names
+    const teamCounts = new Map<string, { name: string; count: number }>();
     
     mostActiveResult.data?.forEach((transfer: any) => {
       // Count from club transfers
-      if (transfer.from_club) {
-        const clubId = transfer.from_club.id;
-        const existing = teamCounts.get(clubId) || {
-          id: clubId,
-          name: transfer.from_club.name,
-          logoUrl: transfer.from_club.logo_url,
-          count: 0
-        };
+      if (transfer.from_club_name) {
+        const clubName = transfer.from_club_name;
+        const existing = teamCounts.get(clubName) || { name: clubName, count: 0 };
         existing.count++;
-        teamCounts.set(clubId, existing);
+        teamCounts.set(clubName, existing);
       }
       
       // Count to club transfers
-      if (transfer.to_club) {
-        const clubId = transfer.to_club.id;
-        const existing = teamCounts.get(clubId) || {
-          id: clubId,
-          name: transfer.to_club.name,
-          logoUrl: transfer.to_club.logo_url,
-          count: 0
-        };
+      if (transfer.to_club_name) {
+        const clubName = transfer.to_club_name;
+        const existing = teamCounts.get(clubName) || { name: clubName, count: 0 };
         existing.count++;
-        teamCounts.set(clubId, existing);
+        teamCounts.set(clubName, existing);
       }
     });
 
@@ -148,27 +131,23 @@ async function handleSummary(req: NextRequest) {
     const mostActiveTeamArray = Array.from(teamCounts.values());
     const mostActiveTeamData = mostActiveTeamArray.length > 0 
       ? mostActiveTeamArray.sort((a, b) => b.count - a.count)[0]
-      : {
-          id: 'none',
-          name: 'No data',
-          logoUrl: undefined,
-          count: 0
-        };
+      : null;
 
     // Build response data
     const summaryData: SummaryResponse = {
       todayCount: todayResult.count || 0,
       windowTotal: windowResult.count || 0,
       totalSpend,
-      mostActiveTeam: {
-        id: mostActiveTeamData.id,
-        name: mostActiveTeamData.name,
-        logoUrl: mostActiveTeamData.logoUrl,
-        transferCount: mostActiveTeamData.count
-      },
-      averageDailyTransfers: Math.round(averageDailyTransfers * 10) / 10,
-      recordHigh,
-      windowContext
+      mostActiveTeam: mostActiveTeamData
+        ? {
+            name: mostActiveTeamData.name,
+            transfers: mostActiveTeamData.count,
+            logo: undefined,
+          }
+        : null,
+      averageDailyTransfers,
+      isRecordHigh: recordHigh,
+      windowType: windowContext
     };
 
     // Create response with caching and rate limit headers

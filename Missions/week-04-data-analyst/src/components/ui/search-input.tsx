@@ -37,7 +37,17 @@ export interface SearchInputProps
 }
 
 const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ className, onClear, showClearButton = true, value, ...props }, ref) => {
+  (
+    {
+      className,
+      onClear,
+      showClearButton = true,
+      value,
+      placeholder = "Search transfers, players, teams...",
+      ...props
+    },
+    ref
+  ) => {
     const hasValue = value && value.toString().length > 0
 
     return (
@@ -52,6 +62,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           )}
           value={value}
           role="searchbox"
+          placeholder={placeholder}
           {...props}
         />
         {showClearButton && hasValue && (

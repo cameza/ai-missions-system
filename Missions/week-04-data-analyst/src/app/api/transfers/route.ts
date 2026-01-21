@@ -44,23 +44,12 @@ async function handleTransfers(req: NextRequest) {
           name,
           logo_url,
           league_id
-        ),
-        player:players (
-          id,
-          name,
-          position,
-          age,
-          nationality
         )
       `, { count: 'exact' });
 
     // Apply filters
     if (query.leagues && query.leagues.length > 0) {
       dbQuery = dbQuery.or(`from_club.league_id.in.(${query.leagues.join(',')}),to_club.league_id.in.(${query.leagues.join(',')})`);
-    }
-
-    if (query.positions && query.positions.length > 0) {
-      dbQuery = dbQuery.in('player.position', query.positions);
     }
 
     if (query.transferTypes && query.transferTypes.length > 0) {
@@ -84,16 +73,44 @@ async function handleTransfers(req: NextRequest) {
     }
 
     if (query.search) {
-      dbQuery = dbQuery.ilike('player.name', `%${query.search}%`);
+      dbQuery = dbQuery.or(
+        `player_first_name.ilike.%${query.search}%,` +
+        `player_last_name.ilike.%${query.search}%,` +
+        `player_full_name.ilike.%${query.search}%,` +
+        `from_club_name.ilike.%${query.search}%,` +
+        `to_club_name.ilike.%${query.search}%`
+      );
     }
 
     if (query.status !== 'all') {
       dbQuery = dbQuery.eq('status', query.status);
     }
 
-    // Apply sorting
-    const sortColumn = query.sortBy === 'player_name' ? 'player.name' : query.sortBy;
-    dbQuery = dbQuery.order(sortColumn, { ascending: query.sortOrder === 'asc' });
+    // Apply sorting - map API sort keys to actual database columns
+    const mapSortColumn = (sortKey: string): string => {
+      switch (sortKey) {
+        case 'player_name':
+          return 'player_full_name';
+        case 'transfer_value':
+          return 'transfer_value_usd';
+        case 'transfer_date':
+          return 'transfer_date';
+        case 'from_club_name':
+          return 'from_club_name';
+        case 'to_club_name':
+          return 'to_club_name';
+        default:
+          return 'transfer_date';
+      }
+    };
+    const sortColumn = mapSortColumn(query.sortBy);
+    
+    // Handle nulls for transfer_value_usd - put nulls last
+    if (query.sortBy === 'transfer_value') {
+      dbQuery = dbQuery.order(sortColumn, { ascending: query.sortOrder === 'asc', nullsFirst: false });
+    } else {
+      dbQuery = dbQuery.order(sortColumn, { ascending: query.sortOrder === 'asc' });
+    }
 
     // Apply pagination
     const offset = (query.page - 1) * query.limit;

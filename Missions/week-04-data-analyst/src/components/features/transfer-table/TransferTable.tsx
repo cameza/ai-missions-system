@@ -12,7 +12,7 @@
 
 import { Transfer } from '@/types';
 import { TransferRow } from './TransferRow';
-import { ArrowUpDown, User, Building2, DollarSign, Activity } from 'lucide-react';
+import { ArrowUpDown, User, Building2, DollarSign, Calendar } from 'lucide-react';
 import { useTransferStore } from '@/lib/stores/useTransferStore';
 
 interface TransferTableProps {
@@ -63,11 +63,11 @@ export function TransferTable({ transfers, onSort, className = '' }: TransferTab
       width: 'w-24',
     },
     {
-      key: 'status',
-      label: 'Status',
-      icon: Activity,
-      sortable: false,
-      width: 'w-20',
+      key: 'transferDate',
+      label: 'Date',
+      icon: Calendar,
+      sortable: true,
+      width: 'w-28',
     },
   ];
 
@@ -86,7 +86,7 @@ export function TransferTable({ transfers, onSort, className = '' }: TransferTab
     }
     
     return (
-      <ArrowUpDown className={`w-3 h-3 text-blue-400 transform ${
+      <ArrowUpDown className={`w-3 h-3 text-[#8B5CF6] transform ${
         sortOrder === 'desc' ? 'rotate-180' : ''
       }`} />
     );

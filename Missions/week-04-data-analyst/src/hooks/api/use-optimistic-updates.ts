@@ -204,8 +204,8 @@ export function useOptimisticTransferCreate(options: OptimisticUpdateOptions = {
             const optimisticTransfer: Transfer = {
               ...transferCreate.data,
               id: tempId,
-              createdAt: new Date(),
-              updatedAt: new Date(),
+              created_at: new Date(),
+              updated_at: new Date(),
             };
             
             return {

@@ -53,13 +53,13 @@ export interface Transfer {
   
   // Player Information
   /** API-Football player ID */
-  playerId: number;
+  player_id: number;
   /** Player first name (required) */
-  playerFirstName: string;
+  player_first_name: string;
   /** Player last name (required) */
-  playerLastName: string;
+  player_last_name: string;
   /** Full player name for search functionality */
-  playerFullName: string;
+  player_full_name: string;
   /** Player age (optional) */
   age?: number;
   /** Player position ('Goalkeeper', 'Defender', 'Midfielder', 'Attacker') */
@@ -69,43 +69,43 @@ export interface Transfer {
   
   // Club Information
   /** UUID reference to from club (optional - may be null for free agents) */
-  fromClubId?: string;
+  from_club_id?: string;
   /** UUID reference to to club (optional - may be null for free agents) */
-  toClubId?: string;
+  to_club_id?: string;
   /** Denormalized from club name for display (required) */
-  fromClubName: string;
+  from_club_name: string;
   /** Denormalized to club name for display (required) */
-  toClubName: string;
+  to_club_name: string;
   
   // League Information
   /** UUID reference to league (optional - may be null for international transfers) */
-  leagueId?: string;
+  league_id?: string;
   /** Denormalized league name for display (required) */
-  leagueName: string;
+  league_name: string;
   
   // Transfer Details
   /** Type of transfer (required) */
-  transferType: TransferType;
+  transfer_type: TransferType;
   /** Transfer value in USD cents (optional - null for free transfers) */
-  transferValueUsd?: number;
+  transfer_value_usd?: number;
   /** Display-formatted transfer value ("€50M", "FREE", "UNDISCLOSED") */
-  transferValueDisplay: string;
+  transfer_value_display: string;
   /** Transfer status (required) */
   status: TransferStatus;
   /** Transfer date (required) */
-  transferDate: Date;
+  transfer_date: Date;
   
   // Transfer Window
   /** Transfer window identifier in format 'YYYY-winter' or 'YYYY-summer' */
   window: TransferWindow;
   /** API-Football transfer ID (required for data sync) */
-  apiTransferId: number;
+  api_transfer_id: number;
   
   // Metadata
   /** Creation timestamp */
-  createdAt: Date;
+  created_at: Date;
   /** Last update timestamp */
-  updatedAt: Date;
+  updated_at: Date;
 }
 
 /**
@@ -238,7 +238,7 @@ export function isAPIResponseSuccess<T>(response: APIResponse<T>): response is {
  * These reflect the actual database schema with string timestamps
  * and nullable fields as they appear from Supabase.
  */
-export type DatabaseTransfer = Omit<Transfer, 'createdAt' | 'updatedAt'> & {
+export type DatabaseTransfer = Omit<Transfer, 'created_at' | 'updated_at'> & {
   created_at: string; // ISO string from database
   updated_at: string; // ISO string from database
 };
@@ -383,6 +383,8 @@ export const TransferFiltersSchema = z.object({
   ageRange: z.tuple([z.number().min(16), z.number().max(50)]).optional(),
   valueRange: z.tuple([z.number().min(0), z.number().max(500000000)]).optional(),
   dateRange: z.tuple([z.date(), z.date()]).optional(),
+  window: TransferWindowSchema.optional(),
+  windowStatus: z.enum(['open', 'closed']).optional(),
   status: z.enum(['all', 'confirmed', 'rumours']).optional(),
 });
 
@@ -504,27 +506,27 @@ export function createEmptyTransferFilters(): TransferFilters {
 export function validateTransferData(data: Partial<Transfer>): string[] {
   const errors: string[] = [];
   
-  if (!data.playerFirstName?.trim()) {
+  if (!data.player_first_name?.trim()) {
     errors.push('Player first name is required');
   }
   
-  if (!data.playerLastName?.trim()) {
+  if (!data.player_last_name?.trim()) {
     errors.push('Player last name is required');
   }
   
-  if (!data.fromClubName?.trim()) {
+  if (!data.from_club_name?.trim()) {
     errors.push('From club name is required');
   }
   
-  if (!data.toClubName?.trim()) {
+  if (!data.to_club_name?.trim()) {
     errors.push('To club name is required');
   }
   
-  if (!data.transferType) {
+  if (!data.transfer_type) {
     errors.push('Transfer type is required');
   }
   
-  if (!data.transferDate) {
+  if (!data.transfer_date) {
     errors.push('Transfer date is required');
   }
   
@@ -561,8 +563,8 @@ export function determineTransferWindow(date: Date): TransferWindow {
 export function databaseTransferToTransfer(dbTransfer: DatabaseTransfer): Transfer {
   return {
     ...dbTransfer,
-    createdAt: new Date(dbTransfer.created_at),
-    updatedAt: new Date(dbTransfer.updated_at),
+    created_at: new Date(dbTransfer.created_at),
+    updated_at: new Date(dbTransfer.updated_at),
   };
 }
 
@@ -573,8 +575,8 @@ export function databaseTransferToTransfer(dbTransfer: DatabaseTransfer): Transf
 export function transferToDatabaseTransfer(transfer: Transfer): DatabaseTransfer {
   return {
     ...transfer,
-    created_at: transfer.createdAt.toISOString(),
-    updated_at: transfer.updatedAt.toISOString(),
+    created_at: transfer.created_at.toISOString(),
+    updated_at: transfer.updated_at.toISOString(),
   };
 }
 
@@ -628,6 +630,10 @@ export interface TransfersQueryParams {
   valueRange?: [number, number];
   /** Date range filter [start, end] */
   dateRange?: [string, string];
+  /** Transfer window filter */
+  window?: TransferWindow;
+  /** Window status filter ('open' or 'closed') */
+  windowStatus?: 'open' | 'closed';
   /** Status filter */
   status?: 'all' | 'confirmed' | 'rumours';
   /** Pagination limit */

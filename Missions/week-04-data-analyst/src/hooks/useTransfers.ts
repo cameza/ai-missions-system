@@ -22,7 +22,7 @@ interface TransfersResponse {
   page: number;
 }
 
-// Mock API function - replace with actual API call
+// Real API function
 const fetchTransfers = async ({
   pageParam = 1,
   searchQuery = '',
@@ -36,105 +36,49 @@ const fetchTransfers = async ({
   sortBy?: string;
   sortOrder?: string;
 }): Promise<TransfersResponse> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  // Map frontend column keys to valid API sort columns
+  const mapSortColumn = (column: string): string => {
+    switch (column) {
+      case 'transferDate':
+        return 'transfer_date';
+      case 'playerFullName':
+        return 'player_name';
+      case 'transferValueDisplay':
+        return 'transfer_value';
+      case 'fromClubName':
+        return 'from_club_name';
+      case 'toClubName':
+        return 'to_club_name';
+      default:
+        return 'transfer_date';
+    }
+  };
 
-  // Mock data generation
-  const mockTransfers: Transfer[] = Array.from({ length: 25 }, (_, index) => {
-    const id = (pageParam - 1) * 25 + index + 1;
-    const players = [
-      { firstName: 'Lionel', lastName: 'Messi', nationality: 'AR', position: 'Attacker' as PlayerPosition },
-      { firstName: 'Cristiano', lastName: 'Ronaldo', nationality: 'PT', position: 'Attacker' as PlayerPosition },
-      { firstName: 'Kylian', lastName: 'Mbappé', nationality: 'FR', position: 'Attacker' as PlayerPosition },
-      { firstName: 'Erling', lastName: 'Haaland', nationality: 'NO', position: 'Attacker' as PlayerPosition },
-      { firstName: 'Kevin', lastName: 'De Bruyne', nationality: 'BE', position: 'Midfielder' as PlayerPosition },
-    ];
-    const clubs = [
-      'Real Madrid', 'Barcelona', 'Manchester City', 'Manchester United', 
-      'Liverpool', 'Chelsea', 'Arsenal', 'Bayern Munich', 'PSG', 'Juventus'
-    ];
-    const fees = ['€110.0M', '€85.5M', '€45.0M', 'FREE', 'UNDISCLOSED', '€22.5M'];
-    const statuses: TransferStatus[] = ['done', 'pending', 'rumour'];
-    
-    const player = players[index % players.length];
-    const fromClub = clubs[index % clubs.length];
-    const toClub = clubs[(index + 1) % clubs.length];
-    const fee = fees[index % fees.length];
-    const status = statuses[index % statuses.length];
-
-    return {
-      id: `transfer-${id}`,
-      playerId: id,
-      playerFirstName: player.firstName,
-      playerLastName: player.lastName,
-      playerFullName: `${player.firstName} ${player.lastName}`,
-      age: 25 + (index % 15),
-      position: player.position,
-      nationality: player.nationality,
-      fromClubId: `club-${fromClub.toLowerCase().replace(' ', '-')}`,
-      toClubId: `club-${toClub.toLowerCase().replace(' ', '-')}`,
-      fromClubName: fromClub,
-      toClubName: toClub,
-      leagueId: 'league-champions-league',
-      leagueName: 'Champions League',
-      transferType: 'Permanent' as TransferType,
-      transferValueUsd: fee === 'FREE' ? 0 : parseInt(fee.replace(/[€M.]/g, '')) * 1000000,
-      transferValueDisplay: fee,
-      status: status,
-      transferDate: new Date(Date.now() - (index * 24 * 60 * 60 * 1000)),
-      window: '2025-winter',
-      apiTransferId: id,
-      createdAt: new Date(Date.now() - (index * 24 * 60 * 60 * 1000)),
-      updatedAt: new Date(Date.now() - (index * 24 * 60 * 60 * 1000)),
-    };
+  // Build query params
+  const params = new URLSearchParams({
+    page: pageParam.toString(),
+    limit: '25',
+    sortBy: mapSortColumn(sortBy),
+    sortOrder,
+    status: statusFilter,
   });
-
-  // Apply search filter
-  let filteredTransfers = mockTransfers;
   if (searchQuery) {
-    filteredTransfers = mockTransfers.filter(transfer =>
-      transfer.playerFullName.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    params.append('search', searchQuery);
   }
-
-  // Apply status filter (for soft launch, we'll simulate status)
-  if (statusFilter === 'confirmed') {
-    filteredTransfers = filteredTransfers.slice(0, Math.ceil(filteredTransfers.length * 0.7));
+  
+  // Call real API
+  const response = await fetch(`/api/transfers?${params.toString()}`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch transfers');
   }
-
-  // Apply sorting
-  filteredTransfers.sort((a, b) => {
-    const aValue = a[sortBy as keyof Transfer];
-    const bValue = b[sortBy as keyof Transfer];
-    
-    // Handle Date objects
-    if (aValue instanceof Date && bValue instanceof Date) {
-      const aTime = aValue.getTime();
-      const bTime = bValue.getTime();
-      return sortOrder === 'asc' ? (aTime > bTime ? 1 : -1) : (aTime < bTime ? 1 : -1);
-    }
-    
-    // Handle strings
-    if (typeof aValue === 'string' && typeof bValue === 'string') {
-      return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
-    }
-    
-    // Handle numbers
-    if (typeof aValue === 'number' && typeof bValue === 'number') {
-      return sortOrder === 'asc' ? (aValue > bValue ? 1 : -1) : (aValue < bValue ? 1 : -1);
-    }
-    
-    // Fallback comparison
-    return sortOrder === 'asc' ? 
-      (String(aValue) > String(bValue) ? 1 : -1) : 
-      (String(aValue) < String(bValue) ? 1 : -1);
-  });
-
+  const json = await response.json();
+  
   return {
-    data: filteredTransfers,
-    hasNextPage: pageParam < 10, // Limit to 10 pages for demo
-    total: filteredTransfers.length + (pageParam - 1) * 25,
-    page: pageParam,
+    data: json.data || [],
+    hasNextPage: json.pagination?.hasMore || false,
+    total: json.pagination?.total || 0,
+    page: json.pagination?.page || pageParam,
   };
 };
 
@@ -151,7 +95,7 @@ interface UseTransfersResult {
   refetch: () => void;
 }
 
-export function useTransfers(): UseTransfersResult {
+export function useTransfers(initialData?: Transfer[]): UseTransfersResult {
   const { searchQuery, statusFilter, sortBy, sortOrder } = useTransferStore();
 
   const query = useInfiniteQuery<TransfersResponse, Error>({
@@ -167,7 +111,7 @@ export function useTransfers(): UseTransfersResult {
     getNextPageParam: (lastPage) =>
       lastPage.hasNextPage ? lastPage.page + 1 : undefined,
     initialPageParam: 1,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0, // Always refetch when state changes
     refetchOnWindowFocus: false,
   });
 

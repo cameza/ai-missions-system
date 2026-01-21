@@ -12,16 +12,16 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { Search } from 'lucide-react';
-import { useTransferStore, TransferStatusFilter } from '@/lib/stores/useTransferStore';
+import { useTransferStore } from '@/lib/stores/useTransferStore';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
 interface FilterBarProps {
   className?: string;
 }
 
 export function FilterBar({ className = '' }: FilterBarProps) {
-  const { searchQuery, statusFilter, setSearchQuery, setStatusFilter } = useTransferStore();
+  const searchQuery = useTransferStore((state) => state.searchQuery);
+  const setSearchQuery = useTransferStore((state) => state.setSearchQuery);
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -41,6 +41,11 @@ export function FilterBar({ className = '' }: FilterBarProps) {
     [setSearchQuery]
   );
 
+  // Keep local input in sync with global store
+  useEffect(() => {
+    setLocalSearchQuery(searchQuery);
+  }, [searchQuery]);
+
   // Cleanup timer on unmount
   useEffect(() => {
     return () => {
@@ -56,10 +61,6 @@ export function FilterBar({ className = '' }: FilterBarProps) {
     debouncedSearch(query);
   };
 
-  const handleFilterToggle = (filter: TransferStatusFilter) => {
-    setStatusFilter(filter);
-  };
-
   return (
     <div className={`flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 ${className}`}>
       {/* Search Input */}
@@ -67,39 +68,11 @@ export function FilterBar({ className = '' }: FilterBarProps) {
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
         <Input
           type="text"
-          placeholder="Search players..."
+          placeholder="Search players or teams..."
           value={localSearchQuery}
           onChange={handleSearchChange}
-          className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500"
+          className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-[#8B5CF6] focus:ring-[#8B5CF6]"
         />
-      </div>
-
-      {/* Status Filter Toggle */}
-      <div className="flex bg-gray-800 rounded-lg p-1 border border-gray-700">
-        <Button
-          variant={statusFilter === 'all' ? 'primary' : 'ghost'}
-          size="sm"
-          onClick={() => handleFilterToggle('all')}
-          className={`px-4 py-2 text-sm font-medium transition-colors ${
-            statusFilter === 'all'
-              ? 'bg-blue-600 text-white'
-              : 'text-gray-400 hover:text-white hover:bg-gray-700'
-          }`}
-        >
-          All
-        </Button>
-        <Button
-          variant={statusFilter === 'confirmed' ? 'primary' : 'ghost'}
-          size="sm"
-          onClick={() => handleFilterToggle('confirmed')}
-          className={`px-4 py-2 text-sm font-medium transition-colors ${
-            statusFilter === 'confirmed'
-              ? 'bg-blue-600 text-white'
-              : 'text-gray-400 hover:text-white hover:bg-gray-700'
-          }`}
-        >
-          Confirmed
-        </Button>
       </div>
     </div>
   );

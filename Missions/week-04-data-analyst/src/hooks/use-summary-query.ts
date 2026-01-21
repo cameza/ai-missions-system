@@ -33,26 +33,29 @@ export interface SummaryData {
   isRecordHigh?: boolean
 }
 
-// Mock API function - replace with actual API call
+// Fetch summary from API
 const fetchSummary = async (): Promise<SummaryData> => {
-  // Call the real API endpoint
   const response = await fetch('/api/summary')
   
   if (!response.ok) {
     throw new Error(`Failed to fetch summary: ${response.statusText}`)
   }
   
-  return response.json()
+  const json = await response.json()
+  
+  // API returns { success: true, data: {...} } - extract the data
+  return json.data || json
 }
 
 /**
  * Hook for fetching dashboard summary data
  * Returns data formatted for KPI cards with proper TypeScript types
  */
-export const useSummaryQuery = () => {
+export const useSummaryQuery = (initialData?: SummaryData | null) => {
   return useQuery({
     queryKey: queryKeys.summary,
     queryFn: fetchSummary,
+    initialData: initialData || undefined,
     ...queryConfig.summary,
     enabled: true,
     retry: 3,

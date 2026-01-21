@@ -12,6 +12,8 @@ interface ChartContainerProps {
   aspectRatio?: number;
   isLoading?: boolean;
   error?: string | null;
+  responsive?: boolean;
+  headerAction?: ReactNode;
 }
 
 export function ChartContainer({
@@ -21,6 +23,8 @@ export function ChartContainer({
   aspectRatio = 16 / 9,
   isLoading = false,
   error = null,
+  responsive = true,
+  headerAction,
 }: ChartContainerProps) {
   if (error) {
     return (
@@ -65,13 +69,22 @@ export function ChartContainer({
         className
       )}
     >
-      <h3 className="text-sm font-medium text-gray-300 mb-4">{title}</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-medium text-gray-300">{title}</h3>
+        {headerAction && <div>{headerAction}</div>}
+      </div>
       <div style={{ aspectRatio }} className="w-full">
-        <ResponsiveContainer width="100%" height="100%">
+        {responsive ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <ChartErrorBoundary>
+              {children}
+            </ChartErrorBoundary>
+          </ResponsiveContainer>
+        ) : (
           <ChartErrorBoundary>
             {children}
           </ChartErrorBoundary>
-        </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

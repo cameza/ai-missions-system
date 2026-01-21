@@ -3,76 +3,111 @@
  * Based on Tech Spec Section 6.2 - Server State Management
  */
 
-'use client';
+'use client'
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useUIStore } from '@/lib/store';
-import { queryKeys, queryConfig } from '@/lib/query-client';
-import { Transfer, TransferFilters, APIResponse } from '@/types/state';
+import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useUIStore } from '@/lib/store'
+import { queryKeys, queryConfig } from '@/lib/query-client'
+import { transferAPI } from '@/lib/api/transfer-api-service'
+import type { Transfer, TransferFilters } from '@/types/state'
 
-// Mock API functions - replace with actual API calls
-const fetchTransfers = async (filters: TransferFilters): Promise<Transfer[]> => {
-  // This would be replaced with actual API call
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  return [];
-};
+const PAGE_SIZE = 25
 
-const fetchTransferSummary = async (): Promise<any> => {
-  // This would be replaced with actual API call
-  await new Promise(resolve => setTimeout(resolve, 800));
-  return {
-    todayTransfers: 12,
-    windowTotal: 1247,
-    totalSpend: 3420000000,
-    mostActiveTeam: { name: 'Real Madrid', transfers: 8 },
-    transfersByLeague: [
-      { league: 'Premier League', count: 342 },
-      { league: 'La Liga', count: 278 },
-      { league: 'Serie A', count: 234 },
-      { league: 'Bundesliga', count: 189 },
-      { league: 'Ligue 1', count: 204 },
-    ],
-    dailyActivity: [
-      { date: '2025-01-14', transfers: 8 },
-      { date: '2025-01-15', transfers: 12 },
-      { date: '2025-01-16', transfers: 15 },
-      { date: '2025-01-17', transfers: 9 },
-      { date: '2025-01-18', transfers: 11 },
-    ],
-  };
-};
+const mapSortField = (field: string): 'transfer_date' | 'transfer_value' | 'player_name' => {
+  switch (field) {
+    case 'transferValue':
+      return 'transfer_value'
+    case 'playerName':
+      return 'player_name'
+    default:
+      return 'transfer_date'
+  }
+}
 
-const fetchTopTransfers = async (): Promise<Transfer[]> => {
-  // This would be replaced with actual API call
-  await new Promise(resolve => setTimeout(resolve, 600));
-  return [];
-};
-
-const fetchLatestDeals = async (): Promise<Transfer[]> => {
-  // This would be replaced with actual API call
-  await new Promise(resolve => setTimeout(resolve, 600));
-  return [];
-};
+const buildTransferParams = (
+  page: number,
+  searchQuery: string,
+  statusFilter: string,
+  sortBy: string,
+  sortOrder: 'asc' | 'desc',
+  filters: TransferFilters
+) => ({
+  page,
+  limit: PAGE_SIZE,
+  search: searchQuery || undefined,
+  status: statusFilter === 'all' ? 'all' : 'confirmed',
+  sortBy: mapSortField(sortBy),
+  sortOrder,
+  leagues: filters.leagues.length ? filters.leagues : undefined,
+  positions: filters.positions.length ? filters.positions : undefined,
+  transferTypes: filters.transferTypes.length ? filters.transferTypes : undefined,
+  minValue: filters.valueRange ? filters.valueRange[0] : undefined,
+  maxValue: filters.valueRange ? filters.valueRange[1] : undefined,
+  startDate: filters.dateRange ? filters.dateRange[0]?.toISOString() : undefined,
+  endDate: filters.dateRange ? filters.dateRange[1]?.toISOString() : undefined,
+})
 
 /**
  * Hook for fetching transfers with filters
  */
 export const useTransfers = () => {
-  const activeFilters = useUIStore((state) => state.activeFilters);
-  const sortConfig = useUIStore((state) => state.sortConfig);
-  const currentPage = useUIStore((state) => state.currentPage);
-  const searchQuery = useUIStore((state) => state.searchQuery);
+  const activeFilters = useUIStore((state) => state.activeFilters)
+  const sortConfig = useUIStore((state) => state.sortConfig)
+  const searchQuery = useUIStore((state) => state.searchQuery)
 
-  return useQuery({
-    queryKey: queryKeys.transfersWithFilters({ 
-      ...activeFilters,
-      search: searchQuery 
-    }),
-    queryFn: () => fetchTransfers(activeFilters),
-    ...queryConfig.transfers,
-    enabled: true,
-  });
-};
+  const query = useInfiniteQuery({
+    queryKey: [
+      ...queryKeys.transfersWithFilters({
+        ...activeFilters,
+        search: searchQuery,
+      }),
+    ],
+    initialPageParam: 1,
+    queryFn: async ({ pageParam = 1 }) => {
+      const params = buildTransferParams(
+        pageParam as number,
+        searchQuery,
+        activeFilters.status,
+        sortConfig.field,
+        sortConfig.direction,
+        activeFilters
+      )
+      const response = await transferAPI.fetchTransfers(params)
+      return {
+        data: response.data,
+        hasNextPage: response.hasMore ?? (response.data.length === params.limit),
+        total: response.total,
+        page: response.page,
+      }
+    },
+    getNextPageParam: (lastPage) =>
+      lastPage?.hasNextPage ? (lastPage.page ?? 1) + 1 : undefined,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
+  })
+
+  const transfers = query.data?.pages.flatMap((page) => page.data) ?? []
+  const hasNextPage = Boolean(query.hasNextPage)
+  const total = query.data?.pages[0]?.total ?? 0
+
+  const loadMore = () => {
+    if (query.hasNextPage && !query.isFetchingNextPage) {
+      query.fetchNextPage()
+    }
+  }
+
+  return {
+    transfers,
+    hasNextPage,
+    total,
+    loadMore,
+    isLoading: query.isLoading,
+    isFetchingNextPage: query.isFetchingNextPage,
+    error: query.error,
+    isError: query.isError,
+    refetch: query.refetch,
+  }
+}
 
 /**
  * Hook for fetching transfer summary for dashboard
@@ -80,23 +115,26 @@ export const useTransfers = () => {
 export const useTransferSummary = () => {
   return useQuery({
     queryKey: queryKeys.summary,
-    queryFn: fetchTransferSummary,
+    queryFn: () => transferAPI.fetchSummary(),
     ...queryConfig.summary,
     enabled: true,
-  });
-};
+  })
+}
 
 /**
  * Hook for fetching top transfers
  */
-export const useTopTransfers = () => {
+export const useTopTransfers = (limit = 5) => {
   return useQuery({
-    queryKey: queryKeys.topTransfers,
-    queryFn: fetchTopTransfers,
+    queryKey: [...queryKeys.topTransfers, { limit }],
+    queryFn: async () => {
+      const response = await transferAPI.fetchTopTransfers({ limit })
+      return response.data
+    },
     ...queryConfig.topTransfers,
     enabled: true,
-  });
-};
+  })
+}
 
 /**
  * Hook for fetching latest deals
@@ -104,11 +142,19 @@ export const useTopTransfers = () => {
 export const useLatestDeals = () => {
   return useQuery({
     queryKey: queryKeys.latestDeals,
-    queryFn: fetchLatestDeals,
+    queryFn: async () => {
+      const response = await transferAPI.fetchTransfers({
+        limit: 10,
+        sortBy: 'transfer_date',
+        sortOrder: 'desc',
+        status: 'all',
+      })
+      return response.data
+    },
     ...queryConfig.latestDeals,
     enabled: true,
-  });
-};
+  })
+}
 
 /**
  * Hook for transfer detail
@@ -116,15 +162,11 @@ export const useLatestDeals = () => {
 export const useTransferDetail = (id: string) => {
   return useQuery({
     queryKey: queryKeys.transferDetail(id),
-    queryFn: async (): Promise<Transfer> => {
-      // Mock implementation
-      await new Promise(resolve => setTimeout(resolve, 500));
-      throw new Error('Transfer not found');
-    },
-    enabled: !!id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-};
+    queryFn: () => transferAPI.fetchTransferById(id),
+    enabled: Boolean(id),
+    staleTime: 5 * 60 * 1000,
+  })
+}
 
 /**
  * Hook for optimistic updates
@@ -137,11 +179,7 @@ export const useOptimisticTransfer = () => {
   const searchQuery = useUIStore((state) => state.searchQuery);
   
   const updateTransfer = useMutation({
-    mutationFn: async (transfer: Partial<Transfer>) => {
-      // This would be an actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return transfer;
-    },
+    mutationFn: async (transfer: Partial<Transfer>) => transfer,
     onMutate: async (newTransfer) => {
       // Cancel any outgoing refetches for the current filters
       const currentQueryKey = queryKeys.transfersWithFilters({ 
@@ -216,19 +254,15 @@ export const useRefreshTransfers = () => {
  * Hook for prefetching data
  */
 export const usePrefetchTransfers = () => {
-  const queryClient = useQueryClient();
-  
+  const queryClient = useQueryClient()
+
   const prefetchTransferDetail = (id: string) => {
     queryClient.prefetchQuery({
       queryKey: queryKeys.transferDetail(id),
-      queryFn: async (): Promise<Transfer> => {
-        // Mock implementation
-        await new Promise(resolve => setTimeout(resolve, 500));
-        throw new Error('Transfer not found');
-      },
-      staleTime: 5 * 60 * 1000, // 5 minutes
-    });
-  };
-  
-  return { prefetchTransferDetail };
-};
+      queryFn: () => transferAPI.fetchTransferById(id),
+      staleTime: 5 * 60 * 1000,
+    })
+  }
+
+  return { prefetchTransferDetail }
+}

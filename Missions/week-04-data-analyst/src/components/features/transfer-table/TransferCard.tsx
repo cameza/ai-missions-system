@@ -59,14 +59,14 @@ export function TransferCard({ transfer, className = '' }: TransferCardProps) {
         <div className="flex items-center gap-3 flex-1 min-w-0">
           {/* Player Photo (placeholder) */}
           <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
-            {transfer.playerFirstName.charAt(0)}{transfer.playerLastName.charAt(0)}
+            {(transfer.player_first_name?.charAt(0) || '')}{(transfer.player_last_name?.charAt(0) || '')}
           </div>
           
           {/* Player Details */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <span className="text-white font-medium truncate">
-                {transfer.playerFullName}
+                {transfer.player_full_name}
               </span>
               {/* Nationality Flag (placeholder) */}
               {transfer.nationality && (
@@ -98,10 +98,10 @@ export function TransferCard({ transfer, className = '' }: TransferCardProps) {
             {/* From Club */}
             <div className="flex items-center gap-1 min-w-0">
               <div className="w-5 h-5 rounded bg-gray-700 flex items-center justify-center text-white text-xs flex-shrink-0">
-                {transfer.fromClubName.charAt(0)}
+                {transfer.from_club_name?.charAt(0) || '?'}
               </div>
               <span className="text-gray-300 text-sm truncate">
-                {transfer.fromClubName}
+                {transfer.from_club_name}
               </span>
             </div>
             
@@ -111,10 +111,10 @@ export function TransferCard({ transfer, className = '' }: TransferCardProps) {
             {/* To Club */}
             <div className="flex items-center gap-1 min-w-0">
               <div className="w-5 h-5 rounded bg-gray-700 flex items-center justify-center text-white text-xs flex-shrink-0">
-                {transfer.toClubName.charAt(0)}
+                {transfer.to_club_name?.charAt(0) || '?'}
               </div>
               <span className="text-gray-300 text-sm truncate">
-                {transfer.toClubName}
+                {transfer.to_club_name}
               </span>
             </div>
           </div>
@@ -124,7 +124,7 @@ export function TransferCard({ transfer, className = '' }: TransferCardProps) {
         <div className="flex items-center gap-3">
           <DollarSign className="w-4 h-4 text-gray-400 flex-shrink-0" />
           <span className="text-white font-medium text-sm">
-            {transfer.transferValueDisplay}
+            {transfer.transfer_value_display}
           </span>
         </div>
 
@@ -133,9 +133,9 @@ export function TransferCard({ transfer, className = '' }: TransferCardProps) {
           {transfer.age && (
             <span>Age: {transfer.age}</span>
           )}
-          {transfer.leagueName && (
+          {transfer.league_name && (
             <span className="truncate ml-auto">
-              {transfer.leagueName}
+              {transfer.league_name}
             </span>
           )}
         </div>

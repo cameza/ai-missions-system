@@ -81,8 +81,10 @@ export function formatPercentage(
     percentage = ((num - baseline) / baseline) * 100
   }
   
-  const formatted = Math.abs(percentage).toFixed(0)
-  const sign = percentage > 0 && showSign ? '+' : percentage < 0 ? '-' : ''
+  // Handle floating point precision issues with proper rounding
+  const roundedPercentage = parseFloat(percentage.toFixed(10)) // Fix precision first
+  const formatted = Math.round(Math.abs(roundedPercentage)).toString()
+  const sign = roundedPercentage > 0 && showSign ? '+' : roundedPercentage < 0 ? '-' : ''
   
   return `${sign}${formatted}%`
 }
