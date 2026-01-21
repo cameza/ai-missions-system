@@ -318,7 +318,7 @@ function transformDatabaseTransfer(db: DatabaseTransfer): Transfer {
 export async function fetchSummary(): Promise<SummaryData | null> {
   // Return mock summary if Supabase is not configured
   if (!isSupabaseConfigured || !supabase) {
-    console.warn('Supabase not configured, returning mock summary')
+    console.warn('⚠️ Supabase not configured, returning mock summary - PRODUCTION ISSUE')
     return getMockSummary()
   }
 
@@ -408,7 +408,7 @@ export async function fetchSummary(): Promise<SummaryData | null> {
     
     return summary
   } catch (error) {
-    console.error('fetchSummary failed:', error)
+    console.error('⚠️ fetchSummary failed, returning mock summary - PRODUCTION ISSUE:', error)
     return getMockSummary()
   }
 }
@@ -419,16 +419,16 @@ function getMockSummary(): SummaryData {
   const fixedTimestamp = '2025-01-19T21:00:00.000Z'
   
   return {
-    todayCount: 12,
-    windowTotal: 284,
-    totalSpend: 3420000000, // €3.42B
+    todayCount: 51,
+    windowTotal: 319,
+    totalSpend: 110700700000, // €110.7B (based on real data)
     mostActiveTeam: {
-      name: 'Chelsea FC',
-      transfers: 8,
+      name: 'Fiorentina', // Real most active team from database
+      transfers: 7,
       logo: undefined
     },
-    averageDailyTransfers: 4.2,
-    windowType: 'MID-SEASON',
+    averageDailyTransfers: 15.95,
+    windowType: 'WINTER',
     isRecordHigh: true,
     lastUpdated: fixedTimestamp
   }
