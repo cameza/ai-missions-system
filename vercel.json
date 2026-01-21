@@ -1,18 +1,15 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install",
-  "framework": "nextjs",
-  "rootDirectory": "Missions/week-04-data-analyst",
-  "crons": [
+  "version": 2,
+  "builds": [
     {
-      "path": "/api/sync/transfers",
-      "schedule": "0 6 * * *"
+      "src": "Missions/week-04-data-analyst/package.json",
+      "use": "@vercel/next"
     }
   ],
-  "env": {
-    "DEADLINE_DAY_MODE": "false",
-    "MANUAL_SYNC_TOKEN": "your_manual_sync_token_here",
-    "ENABLE_DEADLINE_CRON": "false"
-  }
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "Missions/week-04-data-analyst/$1"
+    }
+  ]
 }
