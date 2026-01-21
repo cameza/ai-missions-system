@@ -79,7 +79,12 @@ async function handleTopTransfers(req: NextRequest) {
       toClub: transfer.to_club?.name || transfer.to_club_name || 'Unknown',
       transferValue: transfer.transfer_value_display || formatTransferValue(transfer.transfer_value_usd),
       transferValueUsd: transfer.transfer_value_usd || 0,
-      transferDate: new Date(transfer.transfer_date)
+      transferDate: (() => {
+        const dateStr = transfer.transfer_date;
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const localDate = new Date(year, month - 1, day);
+        return localDate.toISOString().split('T')[0]; // Return YYYY-MM-DD format
+      })()
     }));
 
     // Get total count in window for metadata

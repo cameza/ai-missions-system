@@ -72,14 +72,14 @@ export async function GET(req: NextRequest) {
       
       fromData?.forEach(transfer => {
         const team = transfer.from_club_name;
-        if (team) {
+        if (team && team !== 'Without Club') {
           counts[team] = (counts[team] || 0) + 1;
         }
       });
       
       toData?.forEach(transfer => {
         const team = transfer.to_club_name;
-        if (team) {
+        if (team && team !== 'Without Club') {
           counts[team] = (counts[team] || 0) + 1;
         }
       });
@@ -112,9 +112,12 @@ export async function GET(req: NextRequest) {
       
       data?.forEach(transfer => {
         if (transfer.transfer_date) {
-          const transferDate = new Date(transfer.transfer_date);
-          const dateStr = transferDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          counts[dateStr] = (counts[dateStr] || 0) + 1;
+          // Parse as local date to avoid timezone shift
+          const dateStr = transfer.transfer_date;
+          const [year, month, day] = dateStr.split('-').map(Number);
+          const localDate = new Date(year, month - 1, day);
+          const displayStr = localDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          counts[displayStr] = (counts[displayStr] || 0) + 1;
         }
       });
 

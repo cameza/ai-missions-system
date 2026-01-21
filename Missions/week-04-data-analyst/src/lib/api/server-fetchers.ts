@@ -364,10 +364,10 @@ export async function fetchSummary(): Promise<SummaryData | null> {
     // Find most active team by counting both from and to club appearances
     const teamCounts: Record<string, number> = {}
     teamActivity?.forEach((transfer: any) => {
-      if (transfer.from_club_name) {
+      if (transfer.from_club_name && transfer.from_club_name !== 'Without Club') {
         teamCounts[transfer.from_club_name] = (teamCounts[transfer.from_club_name] || 0) + 1
       }
-      if (transfer.to_club_name) {
+      if (transfer.to_club_name && transfer.to_club_name !== 'Without Club') {
         teamCounts[transfer.to_club_name] = (teamCounts[transfer.to_club_name] || 0) + 1
       }
     })
@@ -476,7 +476,12 @@ export async function fetchTopTransfers(params: {
       toClub: transfer.to_club?.name || transfer.to_club_name || 'Unknown',
       transferValue: transfer.transfer_value_display || formatTransferValue(transfer.transfer_value_usd),
       transferValueUsd: transfer.transfer_value_usd || 0,
-      transferDate: new Date(transfer.transfer_date)
+      transferDate: (() => {
+        const dateStr = transfer.transfer_date;
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const localDate = new Date(year, month - 1, day);
+        return localDate.toISOString().split('T')[0]; // Return YYYY-MM-DD format
+      })()
     }))
     
     return topTransfers

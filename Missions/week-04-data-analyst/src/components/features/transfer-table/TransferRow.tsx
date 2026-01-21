@@ -95,11 +95,25 @@ export function TransferRow({ transfer, className = '' }: TransferRowProps) {
       {/* Transfer Date Column */}
       <div className="w-28">
         <span className="text-gray-300 text-sm">
-          {new Date(transfer.transfer_date).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-          })}
+          {(() => {
+            const transferDate = transfer.transfer_date;
+            // Handle both string and Date types
+            let dateStr: string;
+            if (typeof transferDate === 'string') {
+              dateStr = transferDate;
+            } else {
+              // Convert Date to YYYY-MM-DD format, then parse as local
+              dateStr = transferDate.toISOString().split('T')[0];
+            }
+            // Parse as local date to avoid timezone shift
+            const [year, month, day] = dateStr.split('-').map(Number);
+            const localDate = new Date(year, month - 1, day);
+            return localDate.toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric'
+            });
+          })()}
         </span>
       </div>
 

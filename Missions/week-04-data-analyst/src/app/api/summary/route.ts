@@ -110,16 +110,16 @@ async function handleSummary(req: NextRequest) {
     const teamCounts = new Map<string, { name: string; count: number }>();
     
     mostActiveResult.data?.forEach((transfer: any) => {
-      // Count from club transfers
-      if (transfer.from_club_name) {
+      // Count from club transfers (exclude "Without Club")
+      if (transfer.from_club_name && transfer.from_club_name !== 'Without Club') {
         const clubName = transfer.from_club_name;
         const existing = teamCounts.get(clubName) || { name: clubName, count: 0 };
         existing.count++;
         teamCounts.set(clubName, existing);
       }
       
-      // Count to club transfers
-      if (transfer.to_club_name) {
+      // Count to club transfers (exclude "Without Club")
+      if (transfer.to_club_name && transfer.to_club_name !== 'Without Club') {
         const clubName = transfer.to_club_name;
         const existing = teamCounts.get(clubName) || { name: clubName, count: 0 };
         existing.count++;
