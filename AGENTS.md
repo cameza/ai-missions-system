@@ -101,6 +101,9 @@ mission-folder/
 
 ### Linear Project Management
 - Use Linear MCP for ticket creation and management
+- **Dual Server Architecture**:
+  - **Official Linear MCP Server** (`mcp2_*`): READ operations (list issues, get projects, etc.)
+  - **Custom Linear API Server** (`mcp1_*`): WRITE operations (project updates, custom API calls)
 - Follow hierarchy: Epic → Feature → Task
 - Use consistent labels: `p0-critical`, `p1-high`, `p2-medium`, `p3-low`
 - Phase labels: `phase-0-setup`, `phase-1-foundation`, `phase-2-features`, `phase-3-polish`, `phase-4-deploy`

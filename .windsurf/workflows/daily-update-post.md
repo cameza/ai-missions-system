@@ -1,5 +1,8 @@
 # Daily Update: Post Workflow
 
+**Server Required**: Custom Linear API MCP Server (linear-api) - `mcp1_*` tools
+**Purpose**: Post project updates to Linear (WRITE operations)
+
 This workflow handles posting drafted daily project updates to Linear using the Linear API integration. It follows the `daily-update: Draft` workflow and publishes the approved update to the project.
 
 ## Prerequisites

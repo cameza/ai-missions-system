@@ -1,5 +1,8 @@
 # Daily Update Workflow
 
+**Server Required**: Official Linear MCP Server (linear-mcp-server) - `mcp2_*` tools
+**Purpose**: Read issues and data from Linear (READ operations)
+
 This workflow automates the process of generating daily project progress updates by fetching completed issues from Linear and formatting them into a structured update.
 
 ## Prerequisites
@@ -13,7 +16,7 @@ This workflow automates the process of generating daily project progress updates
 **Use Linear MCP to get completed issues:**
 ```bash
 # Get issues completed today (last 24 hours)
-mcp1_list_issues --project "Mission 1: Resolution Tracker" --state "Done" --updatedAt "-P1D"
+mcp2_list_issues --project "Mission 1: Resolution Tracker" --state "Done" --updatedAt "-P1D"
 ```
 
 **Filter results:**
@@ -128,7 +131,7 @@ mcp1_list_issues --project "Mission 1: Resolution Tracker" --state "Done" --upda
 // Script to fetch daily completed issues and generate update
 async function generateDailyUpdate() {
   // 1. Fetch today's completed issues
-  const completedIssues = await mcp1_list_issues({
+  const completedIssues = await mcp2_list_issues({
     project: "Mission 1: Resolution Tracker",
     state: "Done",
     updatedAt: "-P1D"
