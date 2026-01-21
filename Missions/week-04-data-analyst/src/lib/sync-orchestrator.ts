@@ -152,19 +152,19 @@ export class MockDatabaseService implements DatabaseService {
 
   async getTransferByApiId(apiTransferId: number): Promise<DatabaseTransfer | null> {
     for (const transfer of this.transfers.values()) {
-      if (transfer.apiTransferId === apiTransferId) {
+      if (transfer.api_transfer_id === apiTransferId) {
         return this.transferToDatabase(transfer);
       }
     }
     return null;
   }
 
-  async createTransfer(transferData: Omit<Transfer, 'id' | 'createdAt' | 'updatedAt'>): Promise<Transfer> {
+  async createTransfer(transferData: Omit<Transfer, 'id' | 'created_at' | 'updated_at'>): Promise<Transfer> {
     const transfer: Transfer = {
       ...transferData,
       id: crypto.randomUUID(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      created_at: new Date(),
+      updated_at: new Date(),
     };
     
     this.transfers.set(transfer.id, transfer);
@@ -214,8 +214,8 @@ export class MockDatabaseService implements DatabaseService {
   private transferToDatabase(transfer: Transfer): DatabaseTransfer {
     return {
       ...transfer,
-      created_at: transfer.createdAt.toISOString(),
-      updated_at: transfer.updatedAt.toISOString(),
+      created_at: transfer.created_at.toISOString(),
+      updated_at: transfer.updated_at.toISOString(),
     };
   }
 }
@@ -357,7 +357,7 @@ export class SyncOrchestrator {
         await this.processTransfer(transfer, transaction);
         result.successful++;
       } catch (error) {
-        const errorMsg = `Failed to process transfer ${transfer.apiTransferId}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+        const errorMsg = `Failed to process transfer ${transfer.api_transfer_id}: ${error instanceof Error ? error.message : 'Unknown error'}`;
         result.errors.push(errorMsg);
         result.failed++;
       }
@@ -377,7 +377,7 @@ export class SyncOrchestrator {
     }
 
     // Check if transfer already exists
-    const existing = await this.databaseService.getTransferByApiId(transfer.apiTransferId);
+    const existing = await this.databaseService.getTransferByApiId(transfer.api_transfer_id);
     
     if (existing) {
       // Update existing transfer

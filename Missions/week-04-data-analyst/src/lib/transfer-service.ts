@@ -348,28 +348,28 @@ export class TransferService {
         // Create transfer object
         const transfer: Transfer = {
           id: '', // Will be set by database
-          playerId: apiTransfer.playerId,
-          playerFirstName: firstName,
-          playerLastName: lastName,
-          playerFullName: apiTransfer.playerName,
+          player_id: apiTransfer.playerId,
+          player_first_name: firstName,
+          player_last_name: lastName,
+          player_full_name: apiTransfer.playerName,
           age: apiTransfer.playerAge,
           position: this.mapPosition(apiTransfer.playerPosition),
           nationality: apiTransfer.playerNationality,
-          fromClubId: '', // Will be resolved by database service
-          toClubId: '', // Will be resolved by database service
-          fromClubName: apiTransfer.fromClub.name,
-          toClubName: apiTransfer.toClub.name,
-          leagueId: '', // Will be resolved by database service
-          leagueName: apiTransfer.league.name,
-          transferType,
-          transferValueUsd,
-          transferValueDisplay: formatTransferValue(transferValueUsd),
+          from_club_id: '', // Will be resolved by database service
+          to_club_id: '', // Will be resolved by database service
+          from_club_name: apiTransfer.fromClub.name,
+          to_club_name: apiTransfer.toClub.name,
+          league_id: '', // Will be resolved by database service
+          league_name: apiTransfer.league.name,
+          transfer_type: transferType,
+          transfer_value_usd: transferValueUsd,
+          transfer_value_display: formatTransferValue(transferValueUsd),
           status: 'done', // Default to done for API transfers
-          transferDate,
+          transfer_date: transferDate,
           window: detectTransferWindow(transferDate, internalLeagueId),
-          apiTransferId: apiTransfer.id,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          api_transfer_id: apiTransfer.id,
+          created_at: new Date(),
+          updated_at: new Date(),
         };
 
       return transfer;

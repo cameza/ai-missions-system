@@ -72,7 +72,7 @@ export const useTransfers = () => {
         sortConfig.direction,
         activeFilters
       )
-      const response = await transferAPI.fetchTransfers(params)
+      const response = await transferAPI.fetchTransfers(params as any)
       return {
         data: response.data,
         hasNextPage: response.hasMore ?? (response.data.length === params.limit),
@@ -148,7 +148,7 @@ export const useLatestDeals = () => {
         sortBy: 'transfer_date',
         sortOrder: 'desc',
         status: 'all',
-      })
+      } as any)
       return response.data
     },
     ...queryConfig.latestDeals,

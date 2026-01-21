@@ -5,7 +5,10 @@
  * Re-exports common types from main types file for dashboard-specific imports.
  */
 
-// Re-export core types needed for dashboard
+// Import types directly to avoid circular dependency
+import type { Transfer, Club, League } from './index'
+
+// Re-export for external use
 export type { Transfer, Club, League } from './index'
 
 // Re-export SummaryData from index with proper typing

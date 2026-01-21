@@ -204,12 +204,12 @@ export class TransferAPIService {
     // Transform response data to ensure proper typing
     return {
       ...response,
-      transferDate: new Date(response.transferDate),
-      createdAt: new Date(response.createdAt),
-      updatedAt: new Date(response.updatedAt),
+      transfer_date: new Date(response.transferDate),
+      created_at: new Date(response.createdAt),
+      updated_at: new Date(response.updatedAt),
       status: 'done' as TransferStatus,
       window: `${new Date(response.transferDate).getFullYear()}-${new Date(response.transferDate).getMonth() < 6 ? 'summer' : 'winter'}` as `${number}-winter` | `${number}-summer`,
-    };
+    } as any;
   }
 
   /**
