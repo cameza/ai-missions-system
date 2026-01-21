@@ -3,7 +3,6 @@
   "outputDirectory": "Missions/week-04-data-analyst/.next",
   "installCommand": "cd Missions/week-04-data-analyst && npm install",
   "framework": "nextjs",
-  "rootDirectory": "Missions/week-04-data-analyst",
   "crons": [
     {
       "path": "/api/sync/transfers",
