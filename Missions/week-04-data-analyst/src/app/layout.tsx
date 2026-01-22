@@ -3,6 +3,7 @@ import { Chakra_Petch, Inter } from "next/font/google";
 import "./globals.css";
 import { QueryClientProviderWrapper } from "@/components/providers/query-client-provider";
 import ErrorBoundary from "@/components/error-boundary";
+import { Analytics } from "@vercel/analytics/next";
 
 const chakraPetch = Chakra_Petch({
   subsets: ["latin"],
@@ -50,6 +51,7 @@ export default function RootLayout({
             {children}
           </ErrorBoundary>
         </QueryClientProviderWrapper>
+        <Analytics />
       </body>
     </html>
   );
