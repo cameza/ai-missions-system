@@ -12,6 +12,7 @@
 
 import { Transfer } from '@/types';
 import { ArrowRight } from 'lucide-react';
+import { TeamLogo } from '@/components/ui/TeamLogo';
 
 interface TransferRowProps {
   transfer: Transfer;
@@ -62,10 +63,8 @@ export function TransferRow({ transfer, className = '' }: TransferRowProps) {
 
       {/* From Club Column */}
       <div className="flex items-center gap-2 w-32 min-w-0">
-        {/* Club Logo (placeholder) */}
-        <div className="w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-white text-xs">
-          {transfer.from_club_name?.charAt(0) || '?'}
-        </div>
+        {/* Club Logo */}
+        <TeamLogo clubName={transfer.from_club_name} size={24} />
         <span className="text-gray-300 text-sm truncate">
           {transfer.from_club_name}
         </span>
@@ -76,10 +75,8 @@ export function TransferRow({ transfer, className = '' }: TransferRowProps) {
 
       {/* To Club Column */}
       <div className="flex items-center gap-2 w-32 min-w-0">
-        {/* Club Logo (placeholder) */}
-        <div className="w-6 h-6 rounded bg-gray-700 flex items-center justify-center text-white text-xs">
-          {transfer.to_club_name?.charAt(0) || '?'}
-        </div>
+        {/* Club Logo */}
+        <TeamLogo clubName={transfer.to_club_name} size={24} />
         <span className="text-gray-300 text-sm truncate">
           {transfer.to_club_name}
         </span>
