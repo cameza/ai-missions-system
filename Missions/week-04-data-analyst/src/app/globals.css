@@ -182,3 +182,17 @@
     text-transform: uppercase;
   }
 }
+
+/* Twitter Embed Dark Theme Customization */
+.twitter-timeline {
+  background-color: transparent !important;
+}
+
+.twitter-timeline iframe {
+  border-radius: 0 !important;
+}
+
+/* Hide Twitter branding for cleaner integration */
+.twitter-timeline .timeline-Header {
+  display: none;
+}

@@ -47,16 +47,16 @@ export function SidebarEmptyState() {
 }
 
 // Error State Component
-export function SidebarErrorState({ onRetry }: { onRetry: () => void }) {
+export function SidebarErrorState({ onRetry, tabName = "transfers" }: { onRetry: () => void; tabName?: string }) {
   return (
     <div 
       className="flex flex-col items-center justify-center py-12 text-center"
       role="status"
-      aria-label="Failed to load transfers"
+      aria-label={`Failed to load ${tabName}`}
     >
       <AlertCircle className="h-8 w-8 text-destructive mb-3" />
       <p className="text-text-secondary text-sm font-medium">
-        Failed to load top transfers
+        Failed to load {tabName}
       </p>
       <p className="text-text-tertiary text-xs mt-1 mb-4">
         Please try again later
