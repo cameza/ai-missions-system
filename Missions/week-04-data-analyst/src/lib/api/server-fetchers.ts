@@ -19,22 +19,17 @@ import type { Transfer, SummaryData, TopTransfer } from '@/types/dashboard'
 import { formatTransferValue } from '@/lib/utils/transfer-format'
 
 // Supabase client for server-side operations
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseUrl = process.env.SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Check if Supabase is configured
-const isSupabaseConfigured = supabaseUrl && 
-  supabaseUrl !== 'https://your-project-id.supabase.co'
+// Check if Supabase is configured (same logic as getSupabaseAdminClient)
+const isSupabaseConfigured = supabaseUrl && supabaseServiceKey
 
-// Validate service key format: new format (sb_secret_*) or legacy JWT (eyJ*)
-const isServiceKeyValid = supabaseServiceKey && 
-  (supabaseServiceKey.startsWith('sb_secret_') || supabaseServiceKey.startsWith('eyJ'))
-
-// Use service role key if valid, otherwise fall back to anon key for reads
-const apiKey = isServiceKeyValid ? supabaseServiceKey : supabaseAnonKey
-
-const supabase = isSupabaseConfigured && apiKey ? createClient(supabaseUrl, apiKey) : null
+const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    persistSession: false,
+  },
+}) : null
 
 // Type definitions for database responses
 interface DatabaseTransfer {
