@@ -172,10 +172,11 @@ KPI Card:
 - Background: surface (#12121A)
 - Border: 1px solid surface-border (#2A2A35)
 - Border radius: 8px
-- Padding: 20px 24px
+- Padding: 12px (sm)
+- Min-Height: 100px
 - Value: 30px / 900 italic white
 - Label: 12px / 700 uppercase text-secondary tracking-wider
-- Context: Small colored text right-aligned
+- Context: Inline badge for trends (e.g., "+25% vs avg")
 ```
 
 ### Transfer Table
@@ -492,9 +493,10 @@ Close: Backdrop fade out + content scale down, duration 150ms
 
 **Layout:**
 - Single column layout
+- Horizontal scrollable carousels for KPIs and Charts
 - Full-width components
-- Bottom navigation for sidebar
-- Collapsible chart sections
+- Widget Order: Top Transfers (Sidebar) above Market Table
+- Bottom navigation for sidebar tabs
 
 **Typography:**
 - Slightly smaller font sizes for space
@@ -737,6 +739,7 @@ Close: Backdrop fade out + content scale down, duration 150ms
 - Remove grid lines for cleaner look
 - Custom tooltips with neon styling
 - Smooth hover animations
+- Optimized margins (left: 0) and minimized axis width (30px) for maximum data density
 
 ---
 

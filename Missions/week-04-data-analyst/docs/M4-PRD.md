@@ -568,8 +568,15 @@ All soft launch features PLUS the enhancements below:
 
 **Mobile Behavior:**
 
-* Table becomes card-based list
-* Each card shows:
+*   **KPI Cards**: Displayed in a horizontal scrollable carousel (100px height).
+*   **Charts**: Displayed in a horizontal scrollable carousel with fixed height (400px).
+*   **Widget Order**: 
+    1. KPI Carousel
+    2. Chart Carousel
+    3. Top Transfers (Sidebar widget)
+    4. All Market Transfers (Card list view)
+*   **Table**: Becomes card-based list
+*   Each card shows:
   * Player photo + name
   * From → To (with arrows and crests)
   * Fee + Status badge
