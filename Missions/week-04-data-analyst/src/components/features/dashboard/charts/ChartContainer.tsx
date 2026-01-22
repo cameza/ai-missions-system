@@ -30,7 +30,7 @@ export function ChartContainer({
     return (
       <div
         className={cn(
-          "flex flex-col items-center justify-center p-6 bg-surface border border-red-500/20 rounded-lg min-h-[200px]",
+          "flex flex-col items-center justify-center p-6 bg-surface border border-red-500/20 rounded-lg min-h-[350px]",
           className
         )}
         role="alert"
@@ -46,10 +46,10 @@ export function ChartContainer({
     return (
       <div
         className={cn(
-          "bg-surface border border-gray-800 rounded-lg p-4 min-h-[200px] animate-pulse",
+          "bg-surface border border-gray-800 rounded-lg p-4 min-h-[350px] animate-pulse",
           className
         )}
-        style={{ aspectRatio }}
+        style={aspectRatio ? { aspectRatio } : undefined}
         aria-label={`Loading chart: ${title}`}
       >
         <div className="h-4 bg-gray-800 rounded mb-4 w-1/3"></div>
@@ -65,7 +65,7 @@ export function ChartContainer({
   return (
     <div
       className={cn(
-        "bg-surface border border-gray-800 rounded-lg p-4",
+        "bg-surface border border-gray-800 rounded-lg p-4 flex flex-col min-h-[350px]",
         className
       )}
     >
@@ -73,9 +73,12 @@ export function ChartContainer({
         <h3 className="text-sm font-medium text-gray-300">{title}</h3>
         {headerAction && <div>{headerAction}</div>}
       </div>
-      <div style={{ aspectRatio }} className="w-full">
+      <div 
+        style={aspectRatio ? { aspectRatio } : undefined} 
+        className={cn("w-full flex-1 min-h-0", !aspectRatio && "h-full")}
+      >
         {responsive ? (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="99%" height="100%">
             <ChartErrorBoundary>
               {children}
             </ChartErrorBoundary>

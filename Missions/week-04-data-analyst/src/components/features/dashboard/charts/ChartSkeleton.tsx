@@ -14,7 +14,7 @@ export function ChartSkeleton({
   return (
     <div
       className={cn(
-        "bg-surface border border-gray-800 rounded-lg p-4 min-h-[200px] animate-pulse",
+        "bg-surface border border-gray-800 rounded-lg p-4 min-h-[350px] animate-pulse",
         className
       )}
       style={{ aspectRatio }}

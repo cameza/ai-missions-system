@@ -1197,6 +1197,36 @@ GROUP BY window, league_name;
 
 ### 9.2 Transfer Scraping Workflow
 
+#### Local Development & Production Cron System
+
+**Why We Need Local Cron Jobs:**
+
+The Transfermarkt scraping system requires automated execution every 4 hours to maintain data freshness. While Vercel handles production cron jobs, local development needs its own scheduling system for:
+
+1. **Development Validation**: Test scraping pipeline changes before deployment
+2. **Data Freshness**: Ensure local environment has up-to-date transfer data
+3. **Deadline Day Testing**: Simulate high-frequency updates during critical periods
+4. **Offline Development**: Work without relying on external cron services
+
+**Local Cron Implementation:**
+
+```bash
+# Local cron job (runs every 4 hours)
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin
+
+0 */4 * * * cd "/path/to/project" && /usr/local/bin/node /usr/local/bin/npm run mock-cron normal >> "/path/to/project/logs/cron.log" 2>&1
+```
+
+**Key Components:**
+
+1. **transfermarkt-scrape.ts**: Scrapes Transfermarkt website for latest transfers
+2. **mock-cron.js**: Simulates Vercel cron triggers locally for testing
+3. **local-sync.sh**: Orchestrates scrape → copy → seed pipeline
+4. **logs/cron.log**: Captures all execution output for debugging
+
+**Workflow Steps:**
+
 1. **Scrape step**
    * Run `TRANSFERMARKT_TOP10=true TRANSFERMARKT_PAGE_COUNT=10 npx tsx scripts/transfermarkt-scrape.ts`.
    * Persist CSV into `Temp_Ref/latest-transfers-top10-pages-1-to-10.csv` (cron + manual trigger documented in ops runbook).
@@ -1204,8 +1234,23 @@ GROUP BY window, league_name;
    * `tsx scripts/seed.ts` ingests CSV, resolves clubs/leagues, upserts transfers.
    * `TRANSFER_CSV_PATH` env variable allows pointing to alternate snapshots.
 3. **Schedule**
-   * Cron every 8 hours (matching Section 6.1.4) + manual run on deadline day.
+   * Local cron every 4 hours (6AM, 10AM, 2PM, 6PM, 10PM, 2AM)
+   * Production Vercel cron every 8 hours + manual run on deadline day.
    * Alerts if scraper output count deviates ±10% vs previous run (guards against HTML changes).
+
+**Monitoring & Validation:**
+
+* Check `logs/cron.log` for execution status and errors
+* Run `npm run mock-cron status` to view sync metrics and recent runs
+* Manual validation: Compare scraped data against Transfermarkt UI
+* Performance metrics: Track scrape duration, rows processed, API calls used
+
+**Troubleshooting Common Issues:**
+
+* **Missing logs**: Cron PATH issues - ensure full paths to node/npm
+* **Scraping failures**: Website layout changes - check HTML structure
+* **Database errors**: Club resolution failures - verify name mappings
+* **Rate limiting**: Too frequent requests - adjust scrape intervals
 
 ### 9.3 Residual API Usage (API-Football)
 

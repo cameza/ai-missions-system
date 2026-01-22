@@ -14,6 +14,7 @@ interface TransfersByLeagueChartProps {
   isLoading?: boolean;
   error?: string | null;
   className?: string;
+  aspectRatio?: number;
 }
 
 const CHART_COLORS = {
@@ -27,6 +28,7 @@ export function TransfersByLeagueChart({
   isLoading = false,
   error = null,
   className,
+  aspectRatio = 16 / 9,
 }: TransfersByLeagueChartProps) {
   return (
     <ChartContainer
@@ -34,14 +36,14 @@ export function TransfersByLeagueChart({
       isLoading={isLoading}
       error={error}
       className={className}
-      aspectRatio={16 / 9}
+      aspectRatio={aspectRatio}
     >
       <BarChart
         data={data}
         margin={{
           top: 20,
           right: 30,
-          left: 20,
+          left: 0,
           bottom: 5,
         }}
         role="img"
@@ -63,6 +65,7 @@ export function TransfersByLeagueChart({
           tickLine={false}
         />
         <YAxis
+          width={30}
           tick={{
             fill: "#9CA3AF",
             fontSize: 10,

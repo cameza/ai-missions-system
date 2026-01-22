@@ -13,6 +13,7 @@ interface TopTeamsVolumeChartProps {
   isLoading?: boolean;
   error?: string | null;
   className?: string;
+  aspectRatio?: number;
 }
 
 const COLORS = [
@@ -25,6 +26,7 @@ export function TopTeamsVolumeChart({
   isLoading = false,
   error = null,
   className,
+  aspectRatio = 0,
 }: TopTeamsVolumeChartProps) {
   // Find the maximum volume to calculate percentages
   const maxVolume = Math.max(...data.map((d) => d.volume), 0);
@@ -36,6 +38,7 @@ export function TopTeamsVolumeChart({
       error={error}
       className={className}
       responsive={false}
+      aspectRatio={aspectRatio}
       headerAction={<span className="text-xs text-gray-500 font-mono">IN/OUT</span>}
     >
       <div className="flex flex-col justify-between h-full py-2 space-y-4">

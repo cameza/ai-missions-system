@@ -19,10 +19,11 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { KPICard } from '@/components/ui/kpi-card'
+import { KPICard, trendColors } from '@/components/ui/kpi-card'
 import { Badge } from '@/components/ui/badge'
 import { useSummaryQuery, useRefreshSummary } from '@/hooks/use-summary-query'
 import { formatNumber, formatCurrency, formatComparisonMetric } from '@/utils/formatters'
+import { cn } from '@/lib/utils'
 
 /**
  * Component that renders all four KPI cards for the dashboard
@@ -52,6 +53,12 @@ export const DashboardKPICards: React.FC = () => {
     )
   }, [summary])
 
+  const formatChangeText = (change: number, trend: "up" | "down" | "neutral") => {
+    const roundedChange = Math.round(Math.abs(parseFloat(change.toFixed(10))))
+    const sign = trend === "up" ? "+" : trend === "down" ? "-" : ""
+    return `${sign}${roundedChange}% vs avg`
+  }
+
   return (
     <div className="flex overflow-x-auto pb-4 gap-4 snap-x snap-mandatory -mx-6 px-6 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:pb-0 sm:mx-0 sm:px-0 hide-scrollbar">
       {/* Today's Transfers Card */}
@@ -59,8 +66,13 @@ export const DashboardKPICards: React.FC = () => {
         <KPICard
           title="Today's Transfers"
           value={summary?.todayCount ?? 0}
-          change={todayComparison?.rawChange}
-          trend={todayComparison?.trend}
+          badge={
+            todayComparison && (
+              <span className={cn("text-xs font-medium", trendColors[todayComparison.trend])}>
+                {formatChangeText(todayComparison.rawChange, todayComparison.trend)}
+              </span>
+            )
+          }
           loading={isLoading}
           error={!!error}
           onRetry={handleRetry}

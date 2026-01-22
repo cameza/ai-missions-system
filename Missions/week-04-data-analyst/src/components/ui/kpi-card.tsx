@@ -166,8 +166,8 @@ const KPICard = React.forwardRef<HTMLDivElement, KPICardProps>(({
     // Normal state
     
     const cardContent = (
-      <div className="space-y-3 flex-1 flex flex-col justify-between h-full">
-        <div className="space-y-3">
+      <div className="space-y-2 flex-1 flex flex-col justify-between h-full">
+        <div className="space-y-1">
           {/* Header with title and icon */}
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wider text-gray-300">
@@ -206,8 +206,8 @@ const KPICard = React.forwardRef<HTMLDivElement, KPICardProps>(({
       <Card
         ref={ref}
         variant="glass"
-        padding="default"
-        className={cn(kpiCardVariants({ state: "default" }), "flex flex-col h-full min-h-[160px]", className)}
+        padding="sm"
+        className={cn(kpiCardVariants({ state: "default" }), "flex flex-col h-full min-h-[100px]", className)}
         role="region"
         aria-label={ariaLabel}
         aria-live="polite"
