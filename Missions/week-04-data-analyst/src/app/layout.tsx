@@ -18,11 +18,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Transfer Hub V2",
+  title: "Here We Go Transfers",
   description:
     "Dark-mode-first football transfer analytics dashboard for the soft launch MVP. Real-time transfers, market pulse analytics, and insider signals.",
   openGraph: {
-    title: "Transfer Hub V2",
+    title: "Here We Go Transfers",
     description: "Pure transfer intel. Zero noise. Real-time football transfer analytics dashboard.",
     type: "website",
     locale: "en_US",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Transfer Hub V2",
+    title: "Here We Go Transfers",
     description: "Pure transfer intel. Zero noise. Real-time football transfer analytics dashboard.",
   },
   keywords: ["football transfers", "soccer transfers", "transfer market", "deadline day", "football analytics"],
