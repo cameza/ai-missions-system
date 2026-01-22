@@ -21,31 +21,11 @@ export function getTeamLogoUrl(clubName: string): string | null {
   // Normalize the club name for comparison
   const normalizedName = clubName.trim().toLowerCase();
   
-  // Find the team in our mapping with fuzzy matching
+  // Find the team in our mapping with EXACT matching only
+  // This prevents wrong logo assignments from fuzzy matching
   const teamEntry = Object.entries(API_TEAM_MAPPING).find(([_, team]) => {
     const mappingName = team.name.toLowerCase();
-    
-    // Exact match
-    if (mappingName === normalizedName) {
-      return true;
-    }
-    
-    // Handle common variations
-    const variations = [
-      normalizedName,
-      normalizedName.replace('man city', 'manchester city'),
-      normalizedName.replace('man united', 'manchester united'),
-      normalizedName.replace('atlético', 'atletico madrid'),
-      normalizedName.replace('atletico', 'atletico madrid'),
-      normalizedName.replace('spurs', 'tottenham'),
-      normalizedName.replace('tottenham', 'tottenham'), // Will match with Tottenham in mapping
-    ];
-    
-    return variations.some(variation => 
-      mappingName === variation || 
-      mappingName.includes(variation) || 
-      variation.includes(mappingName)
-    );
+    return mappingName === normalizedName;
   });
 
   if (!teamEntry) {
@@ -95,4 +75,29 @@ export function getTeamInitials(clubName: string): string {
  */
 export function getSupportedTeamNames(): string[] {
   return Object.values(API_TEAM_MAPPING).map(team => team.name);
+}
+
+/**
+ * Debug function to check what team would be matched
+ * 
+ * @param clubName - The name of the club to test
+ * @returns Debug info about the matching process
+ */
+export function debugTeamMatching(clubName: string): { matched: boolean; teamId?: string; teamName?: string; url?: string } {
+  const url = getTeamLogoUrl(clubName);
+  
+  if (!url) {
+    return { matched: false };
+  }
+  
+  // Extract team ID from URL
+  const teamId = url.match(/teams\/(\d+)\.png/)?.[1];
+  const teamEntry = teamId ? API_TEAM_MAPPING[parseInt(teamId)] : undefined;
+  
+  return {
+    matched: true,
+    teamId,
+    teamName: teamEntry?.name,
+    url
+  };
 }
