@@ -49,6 +49,8 @@ async function handleSummary(req: NextRequest) {
       String(now.getMonth() + 1).padStart(2, '0') + '-' + 
       String(now.getDate()).padStart(2, '0');
 
+    const windowContext = await resolveWindowContext(supabase);
+
     // Execute parallel queries for better performance
     const [
       todayResult,

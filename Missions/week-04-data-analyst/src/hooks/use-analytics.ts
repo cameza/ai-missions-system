@@ -23,7 +23,8 @@ export const useTransfersByLeague = () => {
       if (!res.ok) {
         throw new Error('Failed to fetch transfers by league data');
       }
-      return res.json();
+      const json = await res.json();
+      return json.data || json; // Extract data from success response or fallback to direct response
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
@@ -38,7 +39,8 @@ export const useTopTeamsVolume = () => {
       if (!res.ok) {
         throw new Error('Failed to fetch top teams volume data');
       }
-      return res.json();
+      const json = await res.json();
+      return json.data || json; // Extract data from success response or fallback to direct response
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
@@ -53,7 +55,8 @@ export const useDailyActivity = () => {
       if (!res.ok) {
         throw new Error('Failed to fetch daily activity data');
       }
-      return res.json();
+      const json = await res.json();
+      return json.data || json; // Extract data from success response or fallback to direct response
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 2,
