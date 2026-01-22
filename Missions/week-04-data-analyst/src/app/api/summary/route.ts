@@ -43,9 +43,11 @@ async function handleSummary(req: NextRequest) {
       throw new APIError(500, 'Database connection failed');
     }
 
-    // Get current date and window context
-    const today = new Date().toISOString().split('T')[0];
-    const windowContext = await resolveWindowContext(supabase);
+    // Get current date in local timezone for today's transfers
+    const now = new Date();
+    const today = now.getFullYear() + '-' + 
+      String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+      String(now.getDate()).padStart(2, '0');
 
     // Execute parallel queries for better performance
     const [

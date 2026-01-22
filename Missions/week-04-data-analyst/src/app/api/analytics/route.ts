@@ -1,12 +1,13 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdminClient } from '@/lib/supabase-admin';
 import { resolveWindowContext } from '@/lib/utils/window-context';
+import { setCacheHeaders, successResponse } from '@/lib/api/response';
 
 export async function GET(req: NextRequest) {
   const supabase = getSupabaseAdminClient();
   
   if (!supabase) {
-    return Response.json(
+    return NextResponse.json(
       { error: 'Database connection not available' },
       { status: 500 }
     );
@@ -42,7 +43,9 @@ export async function GET(req: NextRequest) {
         .sort((a, b) => b.transfers - a.transfers)
         .slice(0, 5);
 
-      return Response.json(result);
+      let response = successResponse(result);
+      response = setCacheHeaders(response, 900, 1800); // 15min fresh, 30min stale
+      return response;
     }
 
     if (type === 'teams') {
@@ -89,7 +92,9 @@ export async function GET(req: NextRequest) {
         .sort((a, b) => b.volume - a.volume)
         .slice(0, 5);
 
-      return Response.json(result);
+      let response = successResponse(result);
+      response = setCacheHeaders(response, 900, 1800); // 15min fresh, 30min stale
+      return response;
       } catch (error) {
         throw error;
       }
@@ -131,16 +136,18 @@ export async function GET(req: NextRequest) {
           return dateA.getTime() - dateB.getTime();
         });
 
-      return Response.json(result);
+      let response = successResponse(result);
+      response = setCacheHeaders(response, 900, 1800); // 15min fresh, 30min stale
+      return response;
     }
 
-    return Response.json(
+    return NextResponse.json(
       { error: 'Invalid type parameter. Use: leagues, teams, or daily' },
       { status: 400 }
     );
   } catch (error) {
     console.error('Analytics API error:', error);
-    return Response.json(
+    return NextResponse.json(
       { error: 'Failed to fetch analytics data' },
       { status: 500 }
     );
