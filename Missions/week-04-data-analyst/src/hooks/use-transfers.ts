@@ -13,12 +13,12 @@ import type { Transfer, TransferFilters } from '@/types/state'
 
 const PAGE_SIZE = 25
 
-const mapSortField = (field: string): 'transfer_date' | 'transfer_value' | 'player_name' => {
+const mapSortField = (field: string): 'transfer_date' | 'transfer_value' | 'player_full_name' => {
   switch (field) {
     case 'transferValue':
       return 'transfer_value'
     case 'playerName':
-      return 'player_name'
+      return 'player_full_name'
     default:
       return 'transfer_date'
   }

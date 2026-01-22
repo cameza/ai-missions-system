@@ -50,9 +50,6 @@ export function DashboardClient({
   initialSummary, 
   initialTopTransfers 
 }: DashboardClientProps) {
-  // Auto-refresh state
-  const [autoRefresh, setAutoRefresh] = useState(true)
-  const [refreshInterval, setRefreshInterval] = useState(5 * 60 * 1000) // 5 minutes
   const [lastRefresh, setLastRefresh] = useState(new Date('2025-01-19T21:00:00.000Z')) // Fixed timestamp for SSR consistency
 
   // TanStack Query hooks with initial data from server
@@ -62,37 +59,11 @@ export function DashboardClient({
   
   const topTransfersQuery = useTopTransfersQuery(initialTopTransfers)
 
-  // Configure auto-refresh intervals
-  useEffect(() => {
-    if (autoRefresh) {
-      const interval = setInterval(() => {
-        // Refresh all queries
-        transfersQuery.refetch()
-        summaryQuery.refetch()
-        topTransfersQuery.refetch()
-        setLastRefresh(new Date('2025-01-19T21:00:00.000Z'))
-      }, refreshInterval)
-
-      return () => clearInterval(interval)
-    }
-  }, [autoRefresh, refreshInterval, transfersQuery, summaryQuery, topTransfersQuery])
-
   // Handle sorting
   const handleSort = (field: string, direction: 'asc' | 'desc') => {
     const { setSorting } = useTransferStore.getState();
     setSorting(field, direction);
   };
-
-  // Manual refresh handler
-  const handleManualRefresh = () => {
-    Promise.all([
-      transfersQuery.refetch(),
-      summaryQuery.refetch(),
-      topTransfersQuery.refetch()
-    ]).then(() => {
-      setLastRefresh(new Date('2025-01-19T21:00:00.000Z'))
-    })
-  }
 
   // Responsive state
   const [isMobile, setIsMobile] = useState(false)
@@ -155,7 +126,7 @@ export function DashboardClient({
         {/* Second Row: Transfer Table + Sidebar - 65/35 split */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Transfer Table - Left Column (8/12 = 66.67%) */}
-          <div className="lg:col-span-8">
+          <div className="order-2 lg:order-none lg:col-span-8">
             <motion.section
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -172,7 +143,7 @@ export function DashboardClient({
           </div>
           
           {/* Sidebar - Right Column (4/12 = 33.33%) */}
-          <div className="lg:col-span-4">
+          <div className="order-1 lg:order-none lg:col-span-4">
             <motion.aside
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -187,40 +158,6 @@ export function DashboardClient({
         {/* Last updated indicator */}
         <div className="mt-8 text-center text-xs text-text-tertiary">
           Last updated: {lastRefresh.toLocaleTimeString()}
-        </div>
-
-        {/* Auto-refresh controls */}
-        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-surface/80 backdrop-blur-sm p-3 rounded-lg border border-surface-border">
-          <div className="flex items-center gap-2">
-            <Switch 
-              checked={autoRefresh} 
-              onCheckedChange={setAutoRefresh}
-              aria-label="Toggle auto-refresh"
-            />
-            <span className="text-sm text-text-secondary">Auto-refresh</span>
-          </div>
-          
-          {autoRefresh && (
-            <select 
-              value={refreshInterval} 
-              onChange={(e) => setRefreshInterval(Number(e.target.value))}
-              className="text-sm bg-background border border-surface-border rounded px-2 py-1"
-            >
-              <option value={60000}>1 min</option>
-              <option value={300000}>5 min</option>
-              <option value={600000}>10 min</option>
-            </select>
-          )}
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleManualRefresh}
-            disabled={transfersQuery.isLoading || summaryQuery.isLoading || topTransfersQuery.isLoading}
-            className="h-8 w-8 p-0"
-          >
-            <RefreshCw className={`h-4 w-4 ${transfersQuery.isLoading || summaryQuery.isLoading || topTransfersQuery.isLoading ? 'animate-spin' : ''}`} />
-          </Button>
         </div>
       </motion.div>
     </div>

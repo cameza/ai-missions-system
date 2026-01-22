@@ -85,8 +85,8 @@ export const queryConfig = {
   
   // Summary Query
   summary: {
-    staleTime: 15 * 60 * 1000, // 15 minutes for summary
-    refetchInterval: 30 * 60 * 1000, // 30 minutes background refetch
+    staleTime: 2 * 60 * 1000, // 2 minutes for summary (reduced from 15 for better freshness)
+    refetchInterval: 10 * 60 * 1000, // 10 minutes background refetch (reduced from 30)
   },
   
   // Top Transfers Query

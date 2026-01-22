@@ -13,7 +13,7 @@ export const TransfersQuerySchema = z.object({
   endDate: z.string().datetime().optional(),
   search: z.string().max(100).optional(),
   status: z.enum(['all', 'confirmed', 'rumours']).default('all'),
-  sortBy: z.enum(['transfer_date', 'transfer_value', 'player_name', 'from_club_name', 'to_club_name']).default('transfer_date'),
+  sortBy: z.enum(['transfer_date', 'transfer_value', 'player_full_name', 'from_club_name', 'to_club_name']).default('transfer_date'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
 

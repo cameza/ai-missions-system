@@ -42,7 +42,7 @@ const fetchTransfers = async ({
       case 'transferDate':
         return 'transfer_date';
       case 'playerFullName':
-        return 'player_name';
+        return 'player_full_name';
       case 'transferValueDisplay':
         return 'transfer_value';
       case 'fromClubName':

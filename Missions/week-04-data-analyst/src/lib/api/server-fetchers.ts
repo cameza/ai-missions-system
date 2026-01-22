@@ -323,90 +323,118 @@ export async function fetchSummary(): Promise<SummaryData | null> {
   }
 
   try {
-    // Get today's transfers
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    
-    const { data: todayTransfers, error: todayError } = await supabase
-      .from('transfers')
-      .select('count')
-      .gte('transfer_date', today.toISOString())
-    
-    if (todayError) {
-      console.error('Today transfers error:', todayError)
-    }
-    
-    // Get window total (current transfer window)
-    const windowStart = new Date('2025-01-01') // Adjust based on actual window
-    const { data: windowTransfers, error: windowError } = await supabase
-      .from('transfers')
-      .select('transfer_value_usd')
-      .gte('transfer_date', windowStart.toISOString())
-    
-    if (windowError) {
-      console.error('Window transfers error:', windowError)
-    }
-    
+    // Use same logic as API route
+    const today = new Date().toISOString().split('T')[0];
+    const windowContext = '2026-winter'; // Should match window context logic
+
+    // Execute parallel queries for better performance (same as API)
+    const [
+      todayResult,
+      windowResult,
+      spendResult,
+      mostActiveResult,
+      averageResult
+    ] = await Promise.all([
+      // Today's transfers
+      supabase
+        .from('transfers')
+        .select('id', { count: 'exact' })
+        .eq('transfer_date', today),
+      
+      // Window total transfers
+      supabase
+        .from('transfers')
+        .select('id', { count: 'exact' })
+        .eq('window', windowContext),
+      
+      // Total spend
+      supabase
+        .from('transfers')
+        .select('transfer_value_usd')
+        .eq('window', windowContext)
+        .not('transfer_value_usd', 'is', null),
+      
+      // Most active team
+      supabase
+        .from('transfers')
+        .select('from_club_name, to_club_name')
+        .eq('window', windowContext)
+        .limit(1000),
+      
+      // Average daily transfers (last 30 days)
+      supabase
+        .from('transfers')
+        .select('transfer_date', { count: 'exact' })
+        .gte('transfer_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
+    ]);
+
+    // Handle any database errors
+    if (todayResult.error) throw todayResult.error;
+    if (windowResult.error) throw windowResult.error;
+    if (spendResult.error) throw spendResult.error;
+    if (mostActiveResult.error) throw mostActiveResult.error;
+    if (averageResult.error) throw averageResult.error;
+
     // Calculate total spend
-    const totalSpend = windowTransfers?.reduce((sum, transfer: any) => 
-      sum + (transfer.transfer_value_usd || 0), 0) || 0
+    const totalSpend = spendResult.data?.reduce((sum: number, transfer: any) => 
+      sum + (transfer.transfer_value_usd || 0), 0) || 0;
+
+    // Calculate average daily transfers with proper rounding
+    const uniqueDays = new Set(averageResult.data?.map((t: any) => t.transfer_date)).size || 1;
+    const averageDailyTransfers = Math.round(((averageResult.count || 0) / uniqueDays) * 100) / 100;
+
+    // Check if this is a record high (simple threshold for demo)
+    const recordHigh = totalSpend > 3000000000; // $3B threshold
+
+    // Calculate most active team using denormalized club names
+    const teamCounts = new Map<string, { name: string; count: number }>();
     
-    // Get most active team using denormalized club names (always populated)
-    const { data: teamActivity, error: teamError } = await supabase
-      .from('transfers')
-      .select('from_club_name, to_club_name')
-      .gte('transfer_date', windowStart.toISOString())
-    
-    if (teamError) {
-      console.error('Team activity error:', teamError)
-    }
-    
-    // Find most active team by counting both from and to club appearances
-    const teamCounts: Record<string, number> = {}
-    teamActivity?.forEach((transfer: any) => {
+    mostActiveResult.data?.forEach((transfer: any) => {
+      // Count from club transfers (exclude "Without Club")
       if (transfer.from_club_name && transfer.from_club_name !== 'Without Club') {
-        teamCounts[transfer.from_club_name] = (teamCounts[transfer.from_club_name] || 0) + 1
+        const clubName = transfer.from_club_name;
+        const existing = teamCounts.get(clubName) || { name: clubName, count: 0 };
+        existing.count++;
+        teamCounts.set(clubName, existing);
       }
+      
+      // Count to club transfers (exclude "Without Club")
       if (transfer.to_club_name && transfer.to_club_name !== 'Without Club') {
-        teamCounts[transfer.to_club_name] = (teamCounts[transfer.to_club_name] || 0) + 1
+        const clubName = transfer.to_club_name;
+        const existing = teamCounts.get(clubName) || { name: clubName, count: 0 };
+        existing.count++;
+        teamCounts.set(clubName, existing);
       }
-    })
-    
-    const mostActiveTeamEntry = Object.entries(teamCounts)
-      .sort(([,a], [,b]) => b - a)[0]
-    
-    let mostActiveTeam = null
-    if (mostActiveTeamEntry) {
-      mostActiveTeam = {
-        name: mostActiveTeamEntry[0],
-        transfers: mostActiveTeamEntry[1],
-        logo: undefined
-      }
-    }
-    
-    // Get average daily transfers for comparison
-    const daysSinceWindowStart = Math.ceil(
-      (new Date().getTime() - windowStart.getTime()) / (1000 * 60 * 60 * 24)
-    )
-    const averageDailyTransfers = daysSinceWindowStart > 0 
-      ? (windowTransfers?.length || 0) / daysSinceWindowStart 
-      : 0
-    
+    });
+
+    // Find most active team
+    const mostActiveTeamArray = Array.from(teamCounts.values());
+    const mostActiveTeamData = mostActiveTeamArray.length > 0 
+      ? mostActiveTeamArray.sort((a, b) => b.count - a.count)[0]
+      : null;
+
+    // Build response data
     const summary: SummaryData = {
-      todayCount: todayTransfers?.length || 0,
-      windowTotal: windowTransfers?.length || 0,
+      todayCount: todayResult.count || 0,
+      windowTotal: windowResult.count || 0,
       totalSpend,
-      mostActiveTeam: mostActiveTeam || {
-        name: 'No data',
-        transfers: 0
-      },
+      mostActiveTeam: mostActiveTeamData
+        ? {
+            name: mostActiveTeamData.name,
+            transfers: mostActiveTeamData.count,
+            logo: undefined,
+          }
+        : {
+            name: 'No data',
+            transfers: 0,
+          },
       averageDailyTransfers,
-      windowType: 'MID-SEASON',
-      isRecordHigh: false, // TODO: Implement comparison with historical data
+      windowType: 'WINTER', // Convert from window context
+      isRecordHigh: recordHigh,
       lastUpdated: new Date().toISOString()
-    }
+    };
     
-    return summary
+    return summary;
   } catch (error) {
     console.error('⚠️ fetchSummary failed, returning mock summary - PRODUCTION ISSUE:', error)
     return getMockSummary()

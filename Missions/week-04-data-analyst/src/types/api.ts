@@ -96,7 +96,7 @@ export interface TransfersQueryParams {
   endDate?: string;
   search?: string;
   status?: 'all' | 'confirmed' | 'rumours';
-  sortBy?: 'transfer_date' | 'transfer_value' | 'player_name';
+  sortBy?: 'transfer_date' | 'transfer_value' | 'player_full_name';
   sortOrder?: 'asc' | 'desc';
 }
 

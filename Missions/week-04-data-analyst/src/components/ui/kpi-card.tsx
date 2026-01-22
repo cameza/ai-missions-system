@@ -166,26 +166,28 @@ const KPICard = React.forwardRef<HTMLDivElement, KPICardProps>(({
     // Normal state
     
     const cardContent = (
-      <div className="space-y-3">
-        {/* Header with title and icon */}
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-300">
-            {title}
-          </h3>
-          {icon}
-        </div>
+      <div className="space-y-3 flex-1 flex flex-col justify-between h-full">
+        <div className="space-y-3">
+          {/* Header with title and icon */}
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-300">
+              {title}
+            </h3>
+            {icon}
+          </div>
 
-        {/* Main value display */}
-        <div className="flex items-baseline justify-between">
-          <p className="text-2xl font-black italic text-white leading-none">
-            {value}
-          </p>
-          {badge}
+          {/* Main value display */}
+          <div className="flex items-baseline justify-between">
+            <p className="text-2xl font-black italic text-white leading-none">
+              {value}
+            </p>
+            {badge}
+          </div>
         </div>
 
         {/* Change metric with trend indicator */}
         {change !== undefined && (
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pt-1">
             <p 
               className={cn(
                 "text-xs font-medium",
@@ -205,7 +207,7 @@ const KPICard = React.forwardRef<HTMLDivElement, KPICardProps>(({
         ref={ref}
         variant="glass"
         padding="default"
-        className={cn(kpiCardVariants({ state: "default" }), className)}
+        className={cn(kpiCardVariants({ state: "default" }), "flex flex-col h-full min-h-[160px]", className)}
         role="region"
         aria-label={ariaLabel}
         aria-live="polite"
