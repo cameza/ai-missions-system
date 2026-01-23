@@ -13,7 +13,7 @@
 import { Transfer } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { ArrowRight, User, Building2, DollarSign } from 'lucide-react';
+import { ArrowRight, User, Building2, DollarSign, Calendar } from 'lucide-react';
 
 interface TransferCardProps {
   transfer: Transfer;
@@ -49,6 +49,25 @@ export function TransferCard({ transfer, className = '' }: TransferCardProps) {
       default:
         return status.toUpperCase();
     }
+  };
+
+  // Helper function to format transfer date
+  const formatTransferDate = (date: Date | string) => {
+    let dateStr: string;
+    if (typeof date === 'string') {
+      dateStr = date;
+    } else {
+      // Convert Date to YYYY-MM-DD format, then parse as local
+      dateStr = date.toISOString().split('T')[0];
+    }
+    // Parse as local date to avoid timezone shift
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const localDate = new Date(year, month - 1, day);
+    return localDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
   };
 
   return (
@@ -128,7 +147,15 @@ export function TransferCard({ transfer, className = '' }: TransferCardProps) {
           </span>
         </div>
 
-        {/* Additional Details (if available) */}
+        {/* Transfer Date */}
+        <div className="flex items-center gap-3">
+          <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <span className="text-white font-medium text-sm">
+            {formatTransferDate(transfer.transfer_date)}
+          </span>
+        </div>
+
+        {/* Additional Details */}
         <div className="flex items-center justify-between text-xs text-gray-400">
           {transfer.age && (
             <span>Age: {transfer.age}</span>

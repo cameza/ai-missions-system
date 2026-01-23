@@ -311,13 +311,36 @@ function transformDatabaseTransfer(db: DatabaseTransfer): Transfer {
  * Server-side implementation for KPI cards
  */
 export async function fetchSummary(): Promise<SummaryData | null> {
+  // Debug Supabase configuration
+  console.log('🔍 Supabase Debug:', {
+    hasUrl: !!supabaseUrl,
+    hasKey: !!supabaseServiceKey,
+    keyFormat: supabaseServiceKey ? (supabaseServiceKey.startsWith('sb_secret_') ? 'new format' : supabaseServiceKey.startsWith('eyJ') ? 'legacy format' : 'unknown') : 'no key',
+    urlLength: supabaseUrl?.length || 0,
+    keyLength: supabaseServiceKey?.length || 0
+  });
+
   // Return mock summary if Supabase is not configured
   if (!isSupabaseConfigured || !supabase) {
-    console.warn('⚠️ Supabase not configured, returning mock summary - PRODUCTION ISSUE')
+    console.warn('⚠️ Supabase not configured - check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY env vars')
     return getMockSummary()
   }
 
   try {
+    // Test basic connection first
+    console.log('🔌 Testing Supabase connection...')
+    const { data: testData, error: testError } = await supabase
+      .from('transfers')
+      .select('id')
+      .limit(1);
+    
+    if (testError) {
+      console.error('❌ Supabase connection test failed:', testError);
+      throw testError;
+    }
+    
+    console.log('✅ Supabase connection successful');
+
     // Use same logic as API route
     const today = new Date().toISOString().split('T')[0];
     const windowContext = '2026-winter'; // Should match window context logic
@@ -429,9 +452,16 @@ export async function fetchSummary(): Promise<SummaryData | null> {
       lastUpdated: new Date().toISOString()
     };
     
+    console.log('✅ Summary data fetched successfully:', {
+      todayCount: summary.todayCount,
+      windowTotal: summary.windowTotal,
+      totalSpend: summary.totalSpend,
+      mostActiveTeam: summary.mostActiveTeam.name
+    });
+    
     return summary;
   } catch (error) {
-    console.error('⚠️ fetchSummary failed, returning mock summary - PRODUCTION ISSUE:', error)
+    console.error('⚠️ fetchSummary database error - falling back to mock data:', error instanceof Error ? error.message : error)
     return getMockSummary()
   }
 }
