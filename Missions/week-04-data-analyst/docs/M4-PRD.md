@@ -1,7 +1,7 @@
 # Transfer Hub - Product Requirements Document
 
 **Version:** 1.0
-**Last Updated:** January 16, 2025
+**Last Updated:** January 23, 2026
 **Document Owner:** Product Lead
 **Status:** Draft
 
@@ -596,6 +596,79 @@ All soft launch features PLUS the enhancements below:
 * As an analyst, I want to export filtered data
 * As a user, I want to quickly find a specific player's transfer
 * As a mobile user, I want an easy-to-scan card interface
+
+---
+
+#### 6.2.2.1 Mobile Improvements - Completed ✅
+
+**Priority:** P0 (Must Have)
+**Status:** Completed January 23, 2026
+**Implementation:** Mobile sorting controls and transfer date display
+
+**Problem Statement:**
+Mobile users experienced two critical issues:
+1. **Missing Sorting Functionality**: Mobile view lost all sorting capabilities that were available on desktop
+2. **Missing Transfer Date**: Transfer cards showed status badges instead of transfer dates, breaking data consistency with desktop view
+
+**Solution Implemented:**
+
+**Mobile Sorting Controls:**
+- Added sorting dropdown to FilterBar component (mobile-only: `md:hidden`)
+- Sort options: Date, Fee, Player Name, From Club, To Club
+- Integrated with existing transfer store for state management
+- Visual indicators for current sort field and direction (ascending/descending)
+- Dropdown positioned on right side of search bar with proper z-index
+
+**Transfer Date Display:**
+- Added Calendar icon and date display to TransferCard component
+- Positioned between transfer fee and additional details for optimal visual hierarchy
+- Used same date formatting logic as desktop TransferRow for consistency
+- Handles both string and Date types with timezone-safe parsing
+- Maintains responsive layout without cluttering
+
+**Technical Implementation:**
+```tsx
+// Mobile sorting dropdown (FilterBar.tsx)
+<div className="relative md:hidden">
+  <Button variant="ghost" onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}>
+    <ArrowUpDown className="w-4 h-4" />
+    <span>Sort: {getCurrentSortDisplay()}</span>
+    <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : ''}`} />
+  </Button>
+  {/* Dropdown menu with sort options */}
+</div>
+
+// Transfer date display (TransferCard.tsx)
+<div className="flex items-center gap-3">
+  <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
+  <span className="text-white font-medium text-sm">
+    {formatTransferDate(transfer.transfer_date)}
+  </span>
+</div>
+```
+
+**Files Modified:**
+- `src/components/features/transfer-table/FilterBar.tsx` - Added mobile sorting dropdown
+- `src/components/features/transfer-table/TransferCard.tsx` - Added transfer date display
+- `src/lib/api/server-fetchers.ts` - Improved Supabase connection debugging
+
+**Quality Assurance:**
+- ✅ Mobile sorting functionality matches desktop behavior
+- ✅ Transfer date format consistent across mobile/desktop
+- ✅ Responsive design maintained on all screen sizes
+- ✅ No breaking changes to existing functionality
+- ✅ Proper error handling and graceful degradation
+
+**User Impact:**
+- Mobile users now have full sorting capabilities
+- Transfer cards display complete information including dates
+- Consistent user experience across all device types
+- Improved data accessibility and usability
+
+**Performance:**
+- Minimal bundle size impact (reused existing icons and components)
+- Efficient state management with existing transfer store
+- No additional API calls or data fetching
 
 ---
 
