@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Label: Unique identifier for this agent -->
+    <key>Label</key>
+    <string>com.transferhub.sync</string>
+    
+    <!-- Program Arguments: Command to execute -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/node</string>
+        <string>/usr/local/bin/npm</string>
+        <string>run</string>
+        <string>mock-cron</string>
+        <string>normal</string>
+    </array>
+    
+    <!-- Working Directory: Where to run the command -->
+    <key>WorkingDirectory</key>
+    <string>/Users/camilomeza/Documents/Personal Documents/Personal Projects/AIDB Challenge/Missions/week-04-data-analyst</string>
+    
+    <!-- Schedule: Run every hour at minute 0 -->
+    <key>StartInterval</key>
+    <integer>3600</integer> <!-- 3600 seconds = 1 hour -->
+    
+    <!-- Environment Variables -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin</string>
+        <key>NODE_ENV</key>
+        <string>production</string>
+    </dict>
+    
+    <!-- Standard Output & Error: Log to our cron.log file -->
+    <key>StandardOutPath</key>
+    <string>/Users/camilomeza/Documents/Personal Documents/Personal Projects/AIDB Challenge/Missions/week-04-data-analyst/logs/cron.log</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/Users/camilomeza/Documents/Personal Documents/Personal Projects/AIDB Challenge/Missions/week-04-data-analyst/logs/cron.log</string>
+    
+    <!-- Run at load time: Start immediately when loaded -->
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <!-- Keep alive: Restart if crashes -->
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+    
+    <!-- User: Run as current user -->
+    <key>UserName</key>
+    <string>camilomeza</string>
+    
+    <!-- Process Type: Background service -->
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>
