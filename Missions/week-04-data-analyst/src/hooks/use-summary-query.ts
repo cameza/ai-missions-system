@@ -52,12 +52,15 @@ const fetchSummary = async (): Promise<SummaryData> => {
  * Returns data formatted for KPI cards with proper TypeScript types
  */
 export const useSummaryQuery = (initialData?: SummaryData | null) => {
+  const hasInitialData = initialData !== undefined && initialData !== null
+
   return useQuery({
     queryKey: queryKeys.summary,
     queryFn: fetchSummary,
     initialData: initialData || undefined,
     ...queryConfig.summary,
     enabled: true,
+    refetchOnMount: hasInitialData ? false : true,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   })

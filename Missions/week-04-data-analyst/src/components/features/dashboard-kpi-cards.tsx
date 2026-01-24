@@ -36,8 +36,17 @@ export const DashboardKPICards: React.FC = () => {
     error, 
     refetch 
   } = useSummaryQuery()
-  
+
   const refresh = useRefreshSummary()
+
+  React.useEffect(() => {
+    // Trigger refresh right after hydration to keep metrics live without hydration mismatch
+    const refreshTimeout = window.setTimeout(() => {
+      refresh()
+    }, 0)
+
+    return () => window.clearTimeout(refreshTimeout)
+  }, [refresh])
 
   // Handle retry functionality
   const handleRetry = () => {
