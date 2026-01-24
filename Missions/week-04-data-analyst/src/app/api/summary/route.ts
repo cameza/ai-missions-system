@@ -154,9 +154,11 @@ async function handleSummary(req: NextRequest) {
       windowType: windowContext
     };
 
-    // Create response with caching and rate limit headers
+    // Create response with no-store caching and rate limit headers
     let response = successResponse(summaryData);
-    response = setCacheHeaders(response, 900, 1800); // 15min fresh, 30min stale
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    response.headers.set('CDN-Cache-Control', 'no-store');
+    response.headers.set('Vercel-CDN-Cache-Control', 'no-store');
     response = setRateLimitHeaders(response, rateLimitResult.limit, rateLimitResult.remaining, rateLimitResult.reset);
 
     return response;

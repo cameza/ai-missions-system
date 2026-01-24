@@ -14,6 +14,9 @@
  * - PRD §6.2.1: Complete dashboard layout specification
  * - UI Spec §4: Responsive layout structure (65/35 split)
  */
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 import { DashboardClient } from '@/components/dashboard/DashboardClient';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { fetchTransfers, fetchSummary, fetchTopTransfers } from '@/lib/api/server-fetchers';
