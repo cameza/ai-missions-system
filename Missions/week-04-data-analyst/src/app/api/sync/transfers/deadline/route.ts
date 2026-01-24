@@ -14,15 +14,16 @@ async function triggerDeadlineSync(overrides?: Partial<SyncRequestPayload>): Pro
   }
 
   const payload: SyncRequestPayload = {
-    season: overrides?.season,
+    season: overrides?.season ?? 2025,
     isCronTrigger: true,
     isDeadlineDay: overrides?.isDeadlineDay ?? true,
-    strategy: overrides?.strategy ?? 'deadline_day',
+    isManualOverride: false, // This is an automated cron trigger
+    useTop10: overrides?.useTop10 ?? true,
+    pageCount: overrides?.pageCount ?? 5, // More pages for deadline day
   };
 
   return processSyncRequest(payload, {
     forceCron: true,
-    forceStrategy: 'deadline_day',
     contextOverrides: { isDeadlineDay: true },
     skipManualRateLimit: true,
   });
