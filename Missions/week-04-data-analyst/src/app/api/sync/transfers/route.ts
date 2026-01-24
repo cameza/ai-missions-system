@@ -206,7 +206,7 @@ export async function processSyncRequest(
       isCronTrigger ? 'cron' : 'manual',
       context,
       {
-        strategy: 'transfermarkt' as any,
+        strategy: 'transfermarkt',
         totalProcessed: seedingResult.transfersProcessed,
         successful: seedingResult.transfersInserted + seedingResult.transfersUpdated,
         failed: seedingResult.errors.length,

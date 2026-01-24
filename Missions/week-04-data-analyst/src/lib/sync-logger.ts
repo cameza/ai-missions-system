@@ -8,7 +8,7 @@
 export interface SyncLogEntry {
   id: string;
   timestamp: string;
-  strategy: 'normal' | 'deadline_day' | 'emergency';
+  strategy: 'normal' | 'deadline_day' | 'emergency' | 'transfermarkt';
   season: number;
   trigger: 'cron' | 'manual';
   context: {
@@ -199,7 +199,7 @@ export const syncLogger = new SyncLogger();
  * Helper function to log sync from API route
  */
 export function logSyncOperation(
-  strategy: 'normal' | 'deadline_day' | 'emergency',
+  strategy: 'normal' | 'deadline_day' | 'emergency' | 'transfermarkt',
   season: number,
   trigger: 'cron' | 'manual',
   context: any,
