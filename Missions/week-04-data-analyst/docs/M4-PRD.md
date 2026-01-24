@@ -95,8 +95,8 @@ During bi-annual transfer windows (January and May-September), football fans fac
 
 #### Soft Launch (Feb 2025 - End of Window)
 
-* Successfully integrate API-Football API
-* Display real-time transfer data with <2 hour lag
+* Successfully integrate Transfermarkt scraping for real-time transfer data
+* Display real-time transfer data with <2 hour lag via direct scraping
 * Zero critical bugs during deadline day
 * Gather feedback from 10-20 beta users
 * Technical validation of data pipeline
@@ -362,12 +362,14 @@ Given the current date (January 16, 2025) and next window closing (February 2, 2
 
 **Requirements (new pipeline):**
 
-* Scraper cron every 8 hours (e.g., 02:00 / 10:00 / 18:00 UTC). Manual run available for deadline-day spikes.
-* Parse CSV via `scripts/seed.ts` (Papaparse) and upsert into Supabase:
+* Production scraper runs twice daily at 11:30 AM/PM Eastern via Vercel cron
+* Local development uses launchd agent for hourly execution
+* Direct API integration: scraper → seeder → Supabase (no intermediate CSV files)
+* Parse scraped data and upsert into Supabase:
   * Split player names, map nationalities → ISO2 (i18n-iso-countries), infer windows (winter/summer).
   * Resolve or auto-create clubs/leagues by name + country before inserting transfers.
   * Store fee text + derived `transfer_value_usd` (cents) and mark everything as `status = 'done'` since Transfermarkt only lists confirmed deals.
-* Error logging + cache to avoid duplicate club creations during a run.
+* Error logging + retry logic for robust production execution
 
 **Monitoring:**
 
@@ -979,8 +981,8 @@ Mobile users experienced two critical issues:
                                    │
                                    ▼
                     ┌─────────────────────────────┐
-                    │   API-Football.com          │
-                    │   External API              │
+                    │   Transfermarkt.com          │
+                    │   Web Scraping               │
                     └─────────────────────────────┘
 ```
 
@@ -988,11 +990,11 @@ Mobile users experienced two critical issues:
 
 #### Transfer Data Sync Flow
 
-1. **Trigger:** Vercel Cron job fires (scheduled)
-2. **Fetch:** API route calls API-Football `/transfers` endpoint
-3. **Validate:** Check required fields, handle errors
-4. **Transform:** Normalize team names, player names, values
-5. **Enrich:** Fetch club/league data if missing
+1. **Trigger:** Vercel Cron job fires (11:30 AM/PM Eastern)
+2. **Scrape:** API route scrapes Transfermarkt latest transfers pages
+3. **Process:** Parse HTML, extract transfer data, validate fields
+4. **Seed:** Direct database insertion via production seeder
+5. **Cache:** Invalidate Next.js cache for fresh data display
 6. **Upsert:** Insert new transfers, update existing (by unique ID)
 7. **Log:** Record sync status, errors, stats
 8. **Notify:** (Future) Send notifications for new transfers
@@ -1053,11 +1055,13 @@ Mobile users experienced two critical issues:
 
 ### 7.5 Security Considerations
 
-**API Keys:**
+**Environment Variables:**
 
-* Store API-Football key in Vercel environment variables
-* Never expose in client-side code
-* Rotate keys periodically
+* Store Supabase credentials in Vercel environment variables
+* Transfermarkt scraping configuration (page count, top leagues filter)
+* Manual sync token for authenticated triggers
+* Never expose secrets in client-side code
+* Rotate credentials periodically
 
 **Database:**
 
@@ -1087,13 +1091,10 @@ CREATE TABLE transfers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Player Information
-  player_id INTEGER, -- API-Football player ID
-  player_first_name TEXT NOT NULL,
-  player_last_name TEXT NOT NULL,
-  player_full_name TEXT, -- For search
-  age INTEGER,
-  position TEXT, -- 'Goalkeeper', 'Defender', 'Midfielder', 'Attacker'
-  nationality TEXT, -- ISO country code (e.g., 'ENG', 'BRA')
+  player_name TEXT NOT NULL,
+  player_age INTEGER,
+  player_position TEXT,
+  player_nationality TEXT, -- ISO2 country code
   
   -- Club Information
   from_club_id UUID REFERENCES clubs(id),
@@ -1115,17 +1116,18 @@ CREATE TABLE transfers (
   window TEXT, -- '2025-winter', '2025-summer'
   
   -- Metadata
-  api_transfer_id INTEGER UNIQUE, -- API-Football transfer ID
+  scraping_source TEXT DEFAULT 'transfermarkt', -- Data source
+  scraped_at TIMESTAMP WITH TIME ZONE, -- When data was scraped
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   
   -- Indexes
   INDEX idx_transfer_date (transfer_date DESC),
-  INDEX idx_player_name (player_last_name, player_first_name),
+  INDEX idx_player_name (player_name),
   INDEX idx_league (league_id),
   INDEX idx_clubs (from_club_id, to_club_id),
   INDEX idx_window (window),
-  INDEX idx_api_id (api_transfer_id)
+  INDEX idx_scraping_source (scraping_source)
 );
 ```
 
@@ -1138,7 +1140,6 @@ CREATE TABLE clubs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Basic Info
-  api_club_id INTEGER UNIQUE, -- API-Football club ID
   name TEXT NOT NULL,
   short_name TEXT, -- "Man City" vs "Manchester City"
   code TEXT, -- "MCI"
@@ -1172,7 +1173,6 @@ CREATE TABLE leagues (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Basic Info
-  api_league_id INTEGER UNIQUE, -- API-Football league ID
   name TEXT NOT NULL,
   country TEXT, -- ISO code
   
@@ -1316,7 +1316,7 @@ GROUP BY window, league_name;
 
 | Domain | Source | Notes |
 | --- | --- | --- |
-| Transfers (real-time) | Transfermarkt scrape → CSV | Reliable confirmed deals for Top 10 leagues. Scraper controlled in `scripts/transfermarkt-scrape.ts`. |
+| Transfers (real-time) | Transfermarkt scraping → API → Supabase | Production scraper runs twice daily at 11:30 AM/PM Eastern. Local development uses launchd agent. |
 | Leagues & Clubs metadata | API-Football | Stable static info (IDs, venues, logos). Minimal requests keep us under free-tier quota. |
 | Future enrichment | TBD | Player bios, contract metadata may still use API-Football if accuracy improves, or another provider. |
 
@@ -1326,10 +1326,10 @@ GROUP BY window, league_name;
 
 **Why We Need Local Cron Jobs:**
 
-The Transfermarkt scraping system requires automated execution every 4 hours to maintain data freshness. While Vercel handles production cron jobs, local development needs its own scheduling system for:
+The Transfermarkt scraping system requires automated execution to maintain data freshness. While Vercel handles production cron jobs (twice daily), local development needs its own scheduling system for:
 
 1. **Development Validation**: Test scraping pipeline changes before deployment
-2. **Data Freshness**: Ensure local environment has up-to-date transfer data
+2. **Data Freshness**: Ensure local environment has up-to-date transfer data  
 3. **Deadline Day Testing**: Simulate high-frequency updates during critical periods
 4. **Offline Development**: Work without relying on external cron services
 
