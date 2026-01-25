@@ -14,22 +14,17 @@
  * - Tech Spec §8.1: Server Components for initial load
  */
 
-import { createClient } from '@supabase/supabase-js'
-import type { Transfer, SummaryData, TopTransfer } from '@/types/dashboard'
+import { getSupabaseAdminClient } from '@/lib/supabase-admin'
+import { SummaryData, TopTransfer, Transfer } from '@/types/dashboard'
+import { formatDateToEastern } from '@/lib/utils/date'
+import { resolveWindowContext } from '@/lib/utils/window-context'
 import { formatTransferValue } from '@/lib/utils/transfer-format'
 
-// Supabase client for server-side operations
 const supabaseUrl = process.env.SUPABASE_URL
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+const isSupabaseConfigured = Boolean(supabaseUrl && supabaseServiceKey)
 
-// Check if Supabase is configured (same logic as getSupabaseAdminClient)
-const isSupabaseConfigured = supabaseUrl && supabaseServiceKey
-
-const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    persistSession: false,
-  },
-}) : null
+const getServerSupabase = () => getSupabaseAdminClient()
 
 // Type definitions for database responses
 interface DatabaseTransfer {
@@ -94,6 +89,7 @@ export async function fetchTransfers(params: {
   positions?: string[]
 } = {}): Promise<Transfer[]> {
   // Return mock data if Supabase is not configured
+  const supabase = getServerSupabase()
   if (!isSupabaseConfigured || !supabase) {
     console.warn('Supabase not configured, returning mock data')
     return getMockTransfers(params.limit || 100)
@@ -164,6 +160,7 @@ export async function fetchTransfersWithPagination(params: {
   const page = Math.floor(offset / limit) + 1
   
   // Return mock data if Supabase is not configured
+  const supabase = getServerSupabase()
   if (!isSupabaseConfigured || !supabase) {
     console.warn('Supabase not configured, returning mock data with pagination')
     return getMockTransfersWithPagination(limit, offset)
@@ -321,6 +318,7 @@ export async function fetchSummary(): Promise<SummaryData | null> {
   });
 
   // Return mock summary if Supabase is not configured
+  const supabase = getServerSupabase()
   if (!isSupabaseConfigured || !supabase) {
     console.warn('⚠️ Supabase not configured - check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY env vars')
     return getMockSummary()
@@ -342,8 +340,8 @@ export async function fetchSummary(): Promise<SummaryData | null> {
     console.log('✅ Supabase connection successful');
 
     // Use same logic as API route
-    const today = new Date().toISOString().split('T')[0];
-    const windowContext = '2026-winter'; // Should match window context logic
+    const today = formatDateToEastern(new Date());
+    const windowContext = await resolveWindowContext(supabase);
 
     // Execute parallel queries for better performance (same as API)
     const [
@@ -495,6 +493,7 @@ export async function fetchTopTransfers(params: {
   limit?: number
 } = {}): Promise<TopTransfer[]> {
   // Return mock top transfers if Supabase is not configured
+  const supabase = getServerSupabase()
   if (!isSupabaseConfigured || !supabase) {
     console.warn('Supabase not configured, returning mock top transfers')
     return getMockTopTransfers(params.limit || 5)

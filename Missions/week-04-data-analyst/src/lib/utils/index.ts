@@ -6,3 +6,4 @@
 
 export * from './window-detection';
 export * from '../config/league-mapping';
+export * from './date';
