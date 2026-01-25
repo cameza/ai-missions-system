@@ -1,29 +1,47 @@
 page,player,position,age,nationality,club_departed,club_departed_country,club_departed_competition,club_joined,club_joined_country,club_joined_competition,transfer_date,market_value,fee
+1,Aitor Córdoba,Centre-Back,30,Spain,Burgos CF,Spain,LaLiga2,Without Club,,,25/01/2026,€1.20m,?
+1,Yáser Asprilla,Right Winger,22,Colombia,Girona,Spain,LaLiga,Galatasaray,Türkiye,Süper Lig,25/01/2026,€12.00m,loan transfer
+1,Layvin Kurzawa,Left-Back,33,"France, Guadeloupe",Without Club,,,PERSIB,Indonesia,Super League,25/01/2026,€750k,-
+1,Antonio Fiori,Left Winger,22,Italy,Mantova,Italy,Serie B,Frosinone,Italy,Serie B,25/01/2026,€1.30m,loan transfer
+1,Oier Luengo,Centre-Back,28,Spain,Real Oviedo,Spain,LaLiga,Burgos CF,Spain,LaLiga2,25/01/2026,€900k,loan transfer
+1,Milan Smit,Centre-Forward,22,Netherlands,Go Ahead Eagles,Netherlands,Eredivisie,Stoke City,England,Championship,25/01/2026,€2.00m,loan transfer
+1,Joel López Pissano,Attacking Midfield,29,Argentina,BG Pathum Utd.,Thailand,Thai League,Da Nang FC,Vietnam,V.League 1,25/01/2026,€500k,free transfer
+1,Luis Gustavino,Right-Back,26,Ecuador,Dep. Cuenca,Ecuador,LigaPro Serie A,SD Aucas,Ecuador,LigaPro Serie A,24/01/2026,€500k,free transfer
+1,Mohammadmehdi Mohebi,Right Winger,25,Iran,Kalba FC,United Arab Emirates,UAE Pro League,Sepahan,Iran,Persian Gulf League,24/01/2026,€700k,loan transfer
+1,Warren Caddy,Centre-Forward,28,"Madagascar, France",StadeLO,Switzerland,Challenge League,Randers FC,Denmark,Superliga,24/01/2026,€600k,€400k
+1,Martín Río,Central Midfield,24,"Argentina, Italy",Querétaro FC,Mexico,Liga MX Apertura,CA Talleres,Argentina,Torneo Apertura,24/01/2026,€2.50m,?
+1,Alessandro Riep,Right Winger,22,"Argentina, Chile",Audax Italiano,Chile,Liga Primera,Ind. Rivadavia,Argentina,Torneo Apertura,24/01/2026,€500k,loan transfer
+1,Alejandro Martínez,Left Winger,28,Argentina,CA Talleres,Argentina,Torneo Apertura,Huracán,Argentina,Torneo Apertura,24/01/2026,€1.00m,loan transfer
+1,Alfredo Morelos,Centre-Forward,29,Colombia,Santos,Brazil,Série A,Atl. Nacional,Colombia,Liga DIMAYOR I,24/01/2026,€2.20m,free transfer
+1,Melih Bostan,Centre-Forward,21,Türkiye,Konyaspor,Türkiye,Süper Lig,Sakaryaspor,Türkiye,1.Lig,24/01/2026,€800k,?
+1,Giovane,Centre-Forward,22,Brazil,Hellas Verona,Italy,Serie A,Napoli,Italy,Serie A,24/01/2026,€12.00m,€2.00m
+1,Ali Olwan,Centre-Forward,25,Jordan,Al-Karma,Iraq,Iraq Stars League,Al-Sailiya SC,Qatar,Stars League,24/01/2026,€800k,€600k
+1,Agustín Rogel,Centre-Back,28,"Uruguay, Italy",Hertha BSC,Germany,2. Bundesliga,Nacional,Uruguay,Liga AUF Apertura,24/01/2026,€500k,free transfer
+1,Mats Deijl,Right-Back,28,Netherlands,Go Ahead Eagles,Netherlands,Eredivisie,Feyenoord,Netherlands,Eredivisie,24/01/2026,€2.00m,€1.00m
 1,Alfons Sampsted,Right-Back,27,Iceland,Birmingham,England,Championship,Go Ahead Eagles,Netherlands,Eredivisie,24/01/2026,€1.50m,?
-1,Maxime Dominguez,Central Midfield,29,"Switzerland, Spain",Vasco da Gama,Brazil,Série A,Cracovia,Poland,Ekstraklasa,24/01/2026,€1.20m,-
 1,Félix Lemaréchal,Attacking Midfield,22,"France, Cote d'Ivoire",R. Strasbourg,France,Ligue 1,Club Brugge,Belgium,Jupiler Pro League,24/01/2026,€10.00m,€6.50m
 1,Ulises Sánchez,Right Winger,27,Argentina,Belgrano,Argentina,Torneo Apertura,Gimnasia (M),Argentina,Torneo Apertura,24/01/2026,€2.00m,loan transfer
 1,Breno Herculano,Centre-Forward,26,Brazil,CRB,Brazil,Série B,FC Anyang,"Korea, South",K League 1,24/01/2026,€1.00m,loan transfer
 1,Harry Amass,Left-Back,18,England,Man Utd,England,Premier League,Norwich,England,Championship,24/01/2026,€5.00m,loan transfer
-1,Soma Anzai,Right Midfield,23,Japan,FC Tokyo,Japan,,Penafiel,Portugal,Liga Portugal 2,24/01/2026,€800k,loan transfer
-1,Mathias Rasmussen,Central Midfield,28,Norway,Union SG,Belgium,Jupiler Pro League,St. Pauli,Germany,Bundesliga,24/01/2026,€2.50m,?
-1,Lorenzo Venturino,Right Winger,19,Italy,Genoa,Italy,Serie A,Roma,Italy,Serie A,24/01/2026,€1.50m,loan transfer
-1,Josué Colmán,Left Winger,27,Paraguay,Newell's,Argentina,Torneo Apertura,Nacional,Paraguay,Primera División Apertura,24/01/2026,€1.20m,free transfer
-1,Ho-yeon Jung,Central Midfield,25,"Korea, South",Minnesota,United States,MLS,Suwon Bluewings,"Korea, South",K League 2,24/01/2026,€1.00m,loan transfer
-1,Agustín Pereira,Right-Back,24,Uruguay,Racing Club,Uruguay,Liga AUF Apertura,Albion FC,Uruguay,Liga AUF Apertura,23/01/2026,€500k,free transfer
-1,Marcos Gómez,Defensive Midfield,24,Paraguay,Olimpia,Paraguay,Primera División Apertura,Guaraní,Paraguay,Primera División Apertura,23/01/2026,€500k,loan transfer
-1,Toyosi Olusanya,Centre-Forward,28,"England, Nigeria",Houston,United States,MLS,Aberdeen FC,Scotland,Premiership,23/01/2026,€500k,loan transfer
-1,Per Kristian Bråtveit,Goalkeeper,29,Norway,Strømsgodset,Norway,OBOS-ligaen,Aberdeen FC,Scotland,Premiership,23/01/2026,€600k,free transfer
-1,Unai Núñez,Centre-Back,28,Spain,Celta de Vigo,Spain,LaLiga,Valencia,Spain,LaLiga,23/01/2026,€3.50m,loan transfer
-1,Paulo Vitor,Defensive Midfield,21,Brazil,Atlético-MG,Brazil,Série A,Avaí FC,Brazil,Série B,23/01/2026,€700k,loan transfer
-1,Luan Cândido,Left-Back,24,Brazil,RB Bragantino,Brazil,Série A,EC Vitória,Brazil,Série A,23/01/2026,€3.00m,loan transfer
-1,Osmar Giménez,Attacking Midfield,18,Paraguay,Gen. Caballero,Paraguay,,Sarmiento Junin,Argentina,Torneo Apertura,23/01/2026,€750k,free transfer
-1,Marc Leonard,Central Midfield,24,Scotland,Birmingham,England,Championship,Heart of Midl.,Scotland,Premiership,23/01/2026,€700k,loan transfer
-1,Anis Mehmeti,Attacking Midfield,25,"Albania, England",Bristol City,England,Championship,Ipswich,England,Championship,23/01/2026,€10.00m,€3.00m
-1,Kieran Dowell,Attacking Midfield,28,England,Rangers,Scotland,Premiership,Hull City,England,Championship,23/01/2026,€600k,?
-1,Danylo Beskorovaynyi,Centre-Back,26,Ukraine,Polissya,Ukraine,Premier Liga,Sumgayit,Azerbaijan,Premyer Liqa,23/01/2026,€600k,loan transfer
-1,Tommaso Baldanzi,Attacking Midfield,22,Italy,Roma,Italy,Serie A,Genoa,Italy,Serie A,23/01/2026,€10.00m,loan transfer
-1,Ramiro Vaca,Attacking Midfield,26,Bolivia,Bolívar,Bolivia,División Profesional,Wydad AC,Morocco,Botola Pro Inwi,23/01/2026,€500k,€680k
+1,Soma Anzai,Right Midfield,23,Japan,FC Tokyo,Japan,J1 Special Season,Penafiel,Portugal,Liga Portugal 2,24/01/2026,€800k,loan transfer
+2,Mathias Rasmussen,Central Midfield,28,Norway,Union SG,Belgium,Jupiler Pro League,St. Pauli,Germany,Bundesliga,24/01/2026,€2.50m,?
+2,Lorenzo Venturino,Right Winger,19,Italy,Genoa,Italy,Serie A,Roma,Italy,Serie A,24/01/2026,€1.50m,loan transfer
+2,Unai Núñez,Centre-Back,28,Spain,Celta de Vigo,Spain,LaLiga,Valencia,Spain,LaLiga,24/01/2026,€3.50m,loan transfer
+2,Josué Colmán,Left Winger,27,Paraguay,Newell's,Argentina,Torneo Apertura,Nacional,Paraguay,Primera División Apertura,24/01/2026,€1.20m,free transfer
+2,Ho-yeon Jung,Central Midfield,25,"Korea, South",Minnesota,United States,MLS,Suwon Bluewings,"Korea, South",K League 2,24/01/2026,€1.00m,loan transfer
+2,Agustín Pereira,Right-Back,24,Uruguay,Racing Club,Uruguay,Liga AUF Apertura,Albion FC,Uruguay,Liga AUF Apertura,23/01/2026,€500k,free transfer
+2,Marcos Gómez,Defensive Midfield,24,Paraguay,Olimpia,Paraguay,Primera División Apertura,Guaraní,Paraguay,Primera División Apertura,23/01/2026,€500k,loan transfer
+2,Toyosi Olusanya,Centre-Forward,28,"England, Nigeria",Houston,United States,MLS,Aberdeen FC,Scotland,Premiership,23/01/2026,€500k,loan transfer
+2,Per Kristian Bråtveit,Goalkeeper,29,Norway,Strømsgodset,Norway,OBOS-ligaen,Aberdeen FC,Scotland,Premiership,23/01/2026,€600k,free transfer
+2,Paulo Vitor,Defensive Midfield,21,Brazil,Atlético-MG,Brazil,Série A,Avaí FC,Brazil,Série B,23/01/2026,€700k,loan transfer
+2,Luan Cândido,Left-Back,24,Brazil,RB Bragantino,Brazil,Série A,EC Vitória,Brazil,Série A,23/01/2026,€3.00m,loan transfer
+2,Osmar Giménez,Attacking Midfield,18,Paraguay,Gen. Caballero,Paraguay,División Intermedia,Sarmiento Junin,Argentina,Torneo Apertura,23/01/2026,€750k,free transfer
+2,Marc Leonard,Central Midfield,24,Scotland,Birmingham,England,Championship,Heart of Midl.,Scotland,Premiership,23/01/2026,€700k,loan transfer
+2,Anis Mehmeti,Attacking Midfield,25,"Albania, England",Bristol City,England,Championship,Ipswich,England,Championship,23/01/2026,€10.00m,€3.00m
+2,Kieran Dowell,Attacking Midfield,28,England,Rangers,Scotland,Premiership,Hull City,England,Championship,23/01/2026,€600k,?
+2,Danylo Beskorovaynyi,Centre-Back,26,Ukraine,Polissya,Ukraine,Premier Liga,Sumgayit,Azerbaijan,Premyer Liqa,23/01/2026,€600k,loan transfer
+2,Tommaso Baldanzi,Attacking Midfield,22,Italy,Roma,Italy,Serie A,Genoa,Italy,Serie A,23/01/2026,€10.00m,loan transfer
+2,Ramiro Vaca,Attacking Midfield,26,Bolivia,Bolívar,Bolivia,División Profesional,Wydad AC,Morocco,Botola Pro Inwi,23/01/2026,€500k,€680k
 2,Bo De Kerf,Centre-Back,22,Belgium,Lierse SK,Belgium,Challenger Pro League,FCV Dender EH,Belgium,Jupiler Pro League,23/01/2026,€600k,?
 2,Olimpiu Moruțan,Right Winger,26,Romania,Aris Saloniki,Greece,Super League 1,FC Rapid 1923,Romania,SuperLiga,23/01/2026,€2.00m,free transfer
 2,Nils Zätterström,Centre-Back,20,Sweden,Sheff Utd,England,Championship,Genoa,Italy,Serie A,23/01/2026,€3.00m,loan transfer
@@ -31,24 +49,24 @@ page,player,position,age,nationality,club_departed,club_departed_country,club_de
 2,Tomás Avilés,Centre-Back,21,"Argentina, Chile",Miami,United States,MLS,Montréal,Canada,MLS,23/01/2026,€4.50m,loan transfer
 2,Noa Lang,Left Winger,26,"Netherlands, Suriname",Napoli,Italy,Serie A,Galatasaray,Türkiye,Süper Lig,23/01/2026,€25.00m,Loan fee:€2.00m
 2,Lorenzo Lucca,Centre-Forward,25,Italy,Napoli,Italy,Serie A,Nott'm Forest,England,Premier League,23/01/2026,€25.00m,Loan fee:€2.00m
-2,Alessio Vacca,Second Striker,20,Italy,Juve Next Gen,Italy,Serie C - B,Dolomiti,Italy,Serie C - A,23/01/2026,€750k,loan transfer
-2,Frédéric Guilbert,Right-Back,31,France,Lecce,Italy,Serie A,Without Club,,,23/01/2026,€800k,-
-2,Poyraz Yıldırım,Centre-Forward,21,Türkiye,Trabzonspor,Türkiye,Süper Lig,Sakaryaspor,Türkiye,1.Lig,23/01/2026,€1.50m,loan transfer
-2,Mateo Cassierra,Centre-Forward,28,Colombia,Zenit S-Pb,Russia,Premier Liga,Atlético-MG,Brazil,Série A,23/01/2026,€9.00m,€7.00m
-2,Bartuğ Elmaz,Defensive Midfield,22,Türkiye,Fenerbahçe,Türkiye,Süper Lig,Karagümrük,Türkiye,Süper Lig,23/01/2026,€1.50m,loan transfer
-2,Armando Izzo,Centre-Back,33,Italy,Monza,Italy,Serie B,Avellino,Italy,Serie B,23/01/2026,€1.30m,?
-2,Mattia Aramu,Attacking Midfield,30,Italy,Without Club,,,Ternana,Italy,Serie C - B,23/01/2026,€800k,-
-2,Ethan Nwaneri,Attacking Midfield,18,"England, Nigeria",Arsenal,England,Premier League,Marseille,France,Ligue 1,23/01/2026,€40.00m,Loan fee:€1.50m
-2,Dmitriy Tsypchenko,Centre-Forward,26,Russia,SKA Khabarovsk,Russia,1.Division,Torpedo Moscow,Russia,1.Division,23/01/2026,€500k,€110k
-2,Leandro Santos,Right-Back,20,Portugal,Benfica B,Portugal,Liga Portugal 2,Moreirense,Portugal,Liga Portugal,23/01/2026,€1.00m,€800k
-2,Álex Cantero,Left Winger,25,Spain,Jagiellonia,Poland,Ekstraklasa,SD Huesca,Spain,LaLiga2,23/01/2026,€500k,free transfer
-2,Jesper Karlsson,Left Winger,27,Sweden,Bologna,Italy,Serie A,Utrecht,Netherlands,Eredivisie,23/01/2026,€4.00m,loan transfer
-2,Ben Bobzien,Centre-Forward,22,Germany,Mainz,Germany,Bundesliga,Dynamo Dresden,Germany,2. Bundesliga,23/01/2026,€1.20m,loan transfer
-2,Ondrej Karafiat,Centre-Back,31,Czech Republic,1.FC Nuremberg,Germany,2. Bundesliga,Mlada Boleslav,Czech Republic,Chance Liga,23/01/2026,€500k,free transfer
-2,Guilherme Schettine,Centre-Forward,30,"Brazil, Italy",Moreirense,Portugal,Liga Portugal,TJ Jinmen Tiger,China,Super League,23/01/2026,€1.50m,€700k
-2,Jordi Mboula,Right Winger,26,"Spain, Congo",CyD Leonesa,Spain,LaLiga2,HN FC,China,Super League,23/01/2026,€500k,€100k
-2,Simone Panada,Defensive Midfield,23,Italy,Venezia,Italy,Serie B,Atalanta U23,Italy,Serie C - C,23/01/2026,€900k,loan transfer
-2,Facundo Lescano,Centre-Forward,29,"Argentina, Italy",Avellino,Italy,Serie B,Salernitana,Italy,Serie C - C,23/01/2026,€700k,loan transfer
+3,Alessio Vacca,Second Striker,20,Italy,Juve Next Gen,Italy,Serie C - B,Dolomiti,Italy,Serie C - A,23/01/2026,€750k,loan transfer
+3,Frédéric Guilbert,Right-Back,31,France,Lecce,Italy,Serie A,Without Club,,,23/01/2026,€800k,-
+3,Poyraz Yıldırım,Centre-Forward,21,Türkiye,Trabzonspor,Türkiye,Süper Lig,Sakaryaspor,Türkiye,1.Lig,23/01/2026,€1.50m,loan transfer
+3,Mateo Cassierra,Centre-Forward,28,Colombia,Zenit S-Pb,Russia,Premier Liga,Atlético-MG,Brazil,Série A,23/01/2026,€9.00m,€7.00m
+3,Bartuğ Elmaz,Defensive Midfield,22,Türkiye,Fenerbahçe,Türkiye,Süper Lig,Karagümrük,Türkiye,Süper Lig,23/01/2026,€1.50m,loan transfer
+3,Armando Izzo,Centre-Back,33,Italy,Monza,Italy,Serie B,Avellino,Italy,Serie B,23/01/2026,€1.30m,?
+3,Mattia Aramu,Attacking Midfield,30,Italy,Without Club,,,Ternana,Italy,Serie C - B,23/01/2026,€800k,-
+3,Ethan Nwaneri,Attacking Midfield,18,"England, Nigeria",Arsenal,England,Premier League,Marseille,France,Ligue 1,23/01/2026,€40.00m,Loan fee:€1.50m
+3,Dmitriy Tsypchenko,Centre-Forward,26,Russia,SKA Khabarovsk,Russia,1.Division,Torpedo Moscow,Russia,1.Division,23/01/2026,€500k,€110k
+3,Leandro Santos,Right-Back,20,Portugal,Benfica B,Portugal,Liga Portugal 2,Moreirense,Portugal,Liga Portugal,23/01/2026,€1.00m,€800k
+3,Álex Cantero,Left Winger,25,Spain,Jagiellonia,Poland,Ekstraklasa,SD Huesca,Spain,LaLiga2,23/01/2026,€500k,free transfer
+3,Jesper Karlsson,Left Winger,27,Sweden,Bologna,Italy,Serie A,Utrecht,Netherlands,Eredivisie,23/01/2026,€4.00m,loan transfer
+3,Ben Bobzien,Centre-Forward,22,Germany,Mainz,Germany,Bundesliga,Dynamo Dresden,Germany,2. Bundesliga,23/01/2026,€1.20m,loan transfer
+3,Ondrej Karafiat,Centre-Back,31,Czech Republic,1.FC Nuremberg,Germany,2. Bundesliga,Mlada Boleslav,Czech Republic,Chance Liga,23/01/2026,€500k,free transfer
+3,Guilherme Schettine,Centre-Forward,30,"Brazil, Italy",Moreirense,Portugal,Liga Portugal,TJ Jinmen Tiger,China,Super League,23/01/2026,€1.50m,€700k
+3,Jordi Mboula,Right Winger,26,"Spain, Congo",CyD Leonesa,Spain,LaLiga2,HN FC,China,Super League,23/01/2026,€500k,€100k
+3,Simone Panada,Defensive Midfield,23,Italy,Venezia,Italy,Serie B,Atalanta U23,Italy,Serie C - C,23/01/2026,€900k,loan transfer
+3,Facundo Lescano,Centre-Forward,29,"Argentina, Italy",Avellino,Italy,Serie B,Salernitana,Italy,Serie C - C,23/01/2026,€700k,loan transfer
 3,Quinten Timber,Central Midfield,24,"Netherlands, Curacao",Feyenoord,Netherlands,Eredivisie,Marseille,France,Ligue 1,23/01/2026,€25.00m,€4.50m
 3,Rober González,Right Winger,25,Spain,NEC Nijmegen,Netherlands,Eredivisie,Real Zaragoza,Spain,LaLiga2,23/01/2026,€700k,loan transfer
 3,Jayder Asprilla,Centre-Forward,22,Colombia,Atl. Nacional,Colombia,Liga DIMAYOR I,FC Sheriff,Moldova,Super Liga,23/01/2026,€650k,€550k
@@ -56,21 +74,3 @@ page,player,position,age,nationality,club_departed,club_departed_country,club_de
 3,Kingsley Sarfo,Central Midfield,30,Ghana,Without Club,,,Dinamo,Uzbekistan,Superliga,23/01/2026,€500k,-
 3,Nemanja Andjelkovic,Centre-Back,28,Serbia,Aktobe,Kazakhstan,Premier Liga,QD Hainiu,China,Super League,23/01/2026,€650k,free transfer
 3,Malcom Edjouma,Central Midfield,29,"Morocco, France",FCSB,Romania,SuperLiga,QD Hainiu,China,Super League,23/01/2026,€800k,free transfer
-3,Juan Antonio Ros,Centre-Back,29,Spain,TJ Jinmen Tiger,China,Super League,FC Seoul,"Korea, South",K League 1,23/01/2026,€850k,free transfer
-3,Ahmed El Messaoudi,Central Midfield,30,"Morocco, Belgium",Tobol Kostanay,Kazakhstan,Premier Liga,QD Hainiu,China,Super League,23/01/2026,€800k,free transfer
-3,Luis Guerra,Right Winger,29,Venezuela,Limache,Chile,Liga Primera,Tobol Kostanay,Kazakhstan,Premier Liga,23/01/2026,€900k,free transfer
-3,Bram Lagae,Centre-Back,22,Belgium,KAA Gent,Belgium,Jupiler Pro League,USL Dunkerque,France,Ligue 2,23/01/2026,€500k,?
-3,Rein Van Helden,Centre-Back,23,Belgium,Sint-Truiden,Belgium,Jupiler Pro League,Royal Antwerp,Belgium,Jupiler Pro League,23/01/2026,€2.50m,€1.50m
-3,Moctar Diop,Centre-Forward,21,Senegal,Lillestrøm,Norway,Eliteserien,KAA Gent,Belgium,Jupiler Pro League,23/01/2026,€750k,€1.00m
-3,Ryan Fraser,Left Winger,31,Scotland,Southampton,England,Championship,Western Sydney,Australia,A-League Men,23/01/2026,€1.80m,free transfer
-3,Diego Gómez,Central Midfield,22,Mexico,Necaxa,Mexico,Liga MX Apertura,Phoenix Rising,United States,USLC,23/01/2026,€1.20m,?
-3,Lucas Sanseviero,Right Winger,25,Uruguay,Danubio FC,Uruguay,Liga AUF Apertura,Real Valladolid,Spain,LaLiga2,23/01/2026,€1.20m,free transfer
-3,Miguel Borja,Centre-Forward,32,Colombia,River Plate,Argentina,Torneo Apertura,Al-Wasl,United Arab Emirates,UAE Pro League,23/01/2026,€2.00m,free transfer
-3,Valentin Paltsev,Centre-Back,24,Russia,Dinamo Makhach.,Russia,Premier Liga,Krasnodar,Russia,Premier Liga,23/01/2026,€3.00m,€3.20m
-3,Richard Sánchez,Central Midfield,29,Paraguay,Racing Club,Argentina,Torneo Apertura,Olimpia,Paraguay,Primera División Apertura,22/01/2026,€2.50m,loan transfer
-3,Younes El Hannach,Right-Back,21,"France, Morocco",Al-Shamal SC,Qatar,Stars League,Al-Sadd,Qatar,Stars League,22/01/2026,€650k,loan transfer
-3,Lorenzo Lucca,Centre-Forward,25,Italy,Udinese,Italy,Serie A,Napoli,Italy,Serie A,22/01/2026,€25.00m,€26.00m
-3,Axel Frugone,Left-Back,20,"Uruguay, Italy",Nacional,Uruguay,Liga AUF Apertura,Defensor SC,Uruguay,Liga AUF Apertura,22/01/2026,€650k,free transfer
-3,Simone Panada,Defensive Midfield,23,Italy,Atalanta U23,Italy,Serie C - C,Venezia,Italy,Serie B,22/01/2026,€900k,?
-3,Eros Mancuso,Right-Back,26,Argentina,Fortaleza,Brazil,Série B,Estudiantes LP,Argentina,Torneo Apertura,22/01/2026,€3.50m,loan transfer
-3,Max O'Leary,Goalkeeper,29,"Ireland, England",Bristol City,England,Championship,West Brom,England,Championship,22/01/2026,€2.50m,?
