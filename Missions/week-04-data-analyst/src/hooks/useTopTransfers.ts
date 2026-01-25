@@ -14,7 +14,7 @@ export interface TopTransfer {
 
 export const useTopTransfersQuery = (initialData?: TopTransfer[]) => {
   return useQuery({
-    queryKey: ['top-transfers', Date.now()], // Add timestamp for cache busting
+    queryKey: ['top-transfers'],
     queryFn: async (): Promise<TopTransfer[]> => {
       const response = await fetch('/api/top-transfers?v=' + Date.now()) // Add version parameter
       if (!response.ok) {
