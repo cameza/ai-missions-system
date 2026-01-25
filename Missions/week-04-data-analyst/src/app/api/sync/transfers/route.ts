@@ -83,6 +83,21 @@ interface SyncProcessingOptions {
   skipManualRateLimit?: boolean;
 }
 
+/**
+ * Detects if a request is from Vercel cron job based on Authorization header
+ */
+function isVercelCronRequest(request: NextRequest): boolean {
+  const authHeader = request.headers.get('authorization');
+  const cronSecret = process.env.CRON_SECRET;
+  
+  if (!cronSecret) {
+    console.warn('⚠️ CRON_SECRET not configured');
+    return false;
+  }
+  
+  return authHeader === `Bearer ${cronSecret}`;
+}
+
 export async function processSyncRequest(
   validatedBody: SyncRequestPayload,
   options: SyncProcessingOptions = {}
@@ -284,7 +299,25 @@ export async function processSyncRequest(
 
 export async function GET(request: NextRequest) {
   try {
-    // Return current sync status
+    // Check if this is a Vercel cron request
+    if (isVercelCronRequest(request)) {
+      console.log('🤖 Vercel cron job triggered');
+      
+      // Execute sync with cron context
+      const result = await processSyncRequest(
+        {
+          useTop10: true,
+          pageCount: 3,
+          season: 2025,
+          isCronTrigger: true,
+        },
+        { forceCron: true, skipManualRateLimit: true }
+      );
+      
+      return result;
+    }
+    
+    // Regular status endpoint (existing logic)
     return NextResponse.json({
       status: {
         rateLimit: {
@@ -321,9 +354,9 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('❌ Status endpoint failed:', error);
+    console.error('❌ GET endpoint failed:', error);
     return NextResponse.json({
-      error: 'Failed to get sync status',
+      error: 'Failed to process request',
       timestamp: new Date().toISOString(),
     }, { status: 500 });
   }
