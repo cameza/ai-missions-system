@@ -11,6 +11,7 @@ import { validateQuery, SummaryQuerySchema, SummaryQueryParams } from '@/lib/api
 import { applyRateLimit } from '@/lib/api/rate-limit';
 import { createRequestHandler } from '@/lib/api/logger';
 import { resolveWindowContext } from '@/lib/utils/window-context';
+import { formatDateToEastern } from '@/lib/utils/date';
 
 export const runtime = 'nodejs';
 
@@ -43,11 +44,8 @@ async function handleSummary(req: NextRequest) {
       throw new APIError(500, 'Database connection failed');
     }
 
-    // Get current date in local timezone for today's transfers
-    const now = new Date();
-    const today = now.getFullYear() + '-' + 
-      String(now.getMonth() + 1).padStart(2, '0') + '-' + 
-      String(now.getDate()).padStart(2, '0');
+    // Always evaluate "today" in Eastern Time to align with transfer ingest schedule
+    const today = formatDateToEastern(new Date());
 
     const windowContext = await resolveWindowContext(supabase);
 
