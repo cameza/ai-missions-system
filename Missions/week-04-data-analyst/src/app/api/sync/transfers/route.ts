@@ -309,6 +309,8 @@ export async function GET(request: NextRequest) {
           useTop10: true,
           pageCount: 3,
           season: 2025,
+          isDeadlineDay: false,
+          isManualOverride: false,
           isCronTrigger: true,
         },
         { forceCron: true, skipManualRateLimit: true }
