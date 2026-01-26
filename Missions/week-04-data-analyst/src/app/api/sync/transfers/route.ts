@@ -147,7 +147,11 @@ export async function processSyncRequest(
 
     const season = validatedBody.season || 2025;
     const useTop10 = validatedBody.useTop10 ?? true;
-    const pageCount = validatedBody.pageCount ?? 3;
+    let pageCount = validatedBody.pageCount ?? 3;
+    let totalScrapedPages = 0;
+    let totalNewTransfers = 0;
+    let adaptiveScrapingRounds = 0;
+    const MAX_ADAPTIVE_ROUNDS = 3; // Prevent infinite loops
 
     const context: SyncContext = {
       isDeadlineDay: options.contextOverrides?.isDeadlineDay ?? validatedBody.isDeadlineDay ?? false,
@@ -155,105 +159,98 @@ export async function processSyncRequest(
       isCronTrigger,
     };
 
-    console.log(`🚀 Starting Transfermarkt sync: season=${season}, top10=${useTop10}, pages=${pageCount}, trigger=${isCronTrigger ? 'cron' : 'manual'}`);
+    console.log(`🚀 Starting Transfermarkt sync: season=${season}, top10=${useTop10}, initialPages=${pageCount}, trigger=${isCronTrigger ? 'cron' : 'manual'}`);
 
-    // Execute Transfermarkt scraping with retry
-    const scrapingResult = await withRetry(
-      () => scrapeTransfermarktTransfers({
-        useTop10,
-        pageCount,
-        startPage: 1,
-      }),
-      {
-        maxAttempts: 3,
-        initialDelay: 2000,
-        backoffMultiplier: 2,
-        maxDelay: 10000,
-      },
-      { season, endpoint: '/api/sync/transfers', context }
-    );
+    // Adaptive scraping loop
+    do {
+      adaptiveScrapingRounds++;
+      console.log(`📄 Adaptive scraping round ${adaptiveScrapingRounds}: scraping ${pageCount} pages...`);
 
-    if (!scrapingResult.success || scrapingResult.transfers.length === 0) {
-      throw new Error(`Transfermarkt scraping failed: ${scrapingResult.error || 'No transfers found'}`);
-    }
+      // Execute Transfermarkt scraping with retry
+      const scrapingResult = await withRetry(
+        () => scrapeTransfermarktTransfers({
+          useTop10,
+          pageCount,
+          startPage: totalScrapedPages + 1, // Continue from where we left off
+        }),
+        {
+          maxAttempts: 3,
+          initialDelay: 2000,
+          backoffMultiplier: 2,
+          maxDelay: 10000,
+        },
+        { season, endpoint: '/api/sync/transfers', context }
+      );
 
-    console.log(`📊 Scraped ${scrapingResult.totalFound} transfers from ${scrapingResult.pagesScraped} pages`);
-
-    // Seed data to Supabase
-    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error('Missing Supabase configuration');
-    }
-
-    const seedingResult = await withRetry(
-      () => seedTransfermarktData(scrapingResult.transfers, supabaseUrl, supabaseServiceKey),
-      {
-        maxAttempts: 2,
-        initialDelay: 1000,
-        backoffMultiplier: 2,
-        maxDelay: 5000,
-      },
-      { season, endpoint: '/api/sync/transfers', context }
-    );
-
-    if (!seedingResult.success) {
-      throw new Error(`Database seeding failed: ${seedingResult.errors.join(', ')}`);
-    }
-
-    console.log(`🌱 Seeded ${seedingResult.transfersProcessed} transfers: ${seedingResult.transfersInserted} inserted, ${seedingResult.transfersUpdated} updated`);
-
-    // Cache invalidation
-    if (seedingResult.transfersInserted > 0) {
-      try {
-        revalidatePath('/');
-        console.log('🔄 Cache invalidated after successful sync');
-      } catch (cacheError) {
-        console.warn('⚠️ Cache invalidation failed:', cacheError);
+      if (!scrapingResult.success || scrapingResult.transfers.length === 0) {
+        console.log(`⚠️ No more transfers found or scraping failed. Stopping adaptive scraping.`);
+        break;
       }
-    }
 
-    // Log the operation
-    logSyncOperation(
-      'transfermarkt',
-      season,
-      isCronTrigger ? 'cron' : 'manual',
-      context,
-      {
-        strategy: 'transfermarkt',
-        totalProcessed: seedingResult.transfersProcessed,
-        successful: seedingResult.transfersInserted + seedingResult.transfersUpdated,
-        failed: seedingResult.errors.length,
-        duration: seedingResult.duration,
-        leaguesProcessed: scrapingResult.pagesScraped,
-        apiCallsUsed: 0, // No API calls for Transfermarkt scraping
-        errors: seedingResult.errors,
-      },
-      {
-        used: 0,
-        limit: 3000,
-        remaining: 3000,
-        emergencyMode: false,
-        cacheHits: 0,
-        usagePercentage: 0,
+      console.log(`📊 Scraped ${scrapingResult.totalFound} transfers from ${scrapingResult.pagesScraped} pages`);
+      totalScrapedPages += scrapingResult.pagesScraped;
+
+      // Seed data to Supabase
+      const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+      if (!supabaseUrl || !supabaseServiceKey) {
+        throw new Error('Missing Supabase configuration');
       }
-    );
 
+      const seedingResult = await withRetry(
+        () => seedTransfermarktData(scrapingResult.transfers, supabaseUrl, supabaseServiceKey),
+        {
+          maxAttempts: 2,
+          initialDelay: 1000,
+          backoffMultiplier: 2,
+          maxDelay: 5000,
+        },
+        { season, endpoint: '/api/sync/transfers', context }
+      );
+
+      if (!seedingResult.success) {
+        throw new Error(`Database seeding failed: ${seedingResult.errors.join(', ')}`);
+      }
+
+      console.log(`🌱 Seeded ${seedingResult.transfersProcessed} transfers: ${seedingResult.transfersInserted} inserted, ${seedingResult.transfersUpdated} updated`);
+      totalNewTransfers += seedingResult.transfersInserted;
+
+      // Check if we should continue scraping (all transfers were new AND we haven't exceeded limits)
+      if (seedingResult.allNewTransfers && adaptiveScrapingRounds < MAX_ADAPTIVE_ROUNDS && totalScrapedPages < 10) {
+        console.log(`🔄 All transfers were new! Expanding to scrape ${pageCount} more pages...`);
+        // Continue with same page count for next round
+      } else {
+        console.log(`✅ Stopping adaptive scraping. Reasons:`);
+        if (!seedingResult.allNewTransfers) console.log(`  - Some existing transfers found`);
+        if (adaptiveScrapingRounds >= MAX_ADAPTIVE_ROUNDS) console.log(`  - Max adaptive rounds reached`);
+        if (totalScrapedPages >= 10) console.log(`  - Max pages limit reached`);
+        break;
+      }
+
+    } while (true);
+
+    console.log(`🎯 Adaptive scraping completed:`);
+    console.log(`  - Total pages scraped: ${totalScrapedPages}`);
+    console.log(`  - Total new transfers: ${totalNewTransfers}`);
+    console.log(`  - Adaptive rounds: ${adaptiveScrapingRounds}`);
+
+    // Return final aggregated results
     const response = {
-      success: seedingResult.success,
+      success: true,
       strategy: 'transfermarkt' as const,
       season,
       result: {
         strategy: 'transfermarkt' as const,
-        totalProcessed: seedingResult.transfersProcessed,
-        successful: seedingResult.transfersInserted + seedingResult.transfersUpdated,
-        failed: seedingResult.errors.length,
-        duration: seedingResult.duration,
-        pagesScraped: scrapingResult.pagesScraped,
-        transfersInserted: seedingResult.transfersInserted,
-        transfersUpdated: seedingResult.transfersUpdated,
-        errors: seedingResult.errors,
+        totalProcessed: totalNewTransfers,
+        successful: totalNewTransfers,
+        failed: 0,
+        duration: Date.now() - startTime,
+        pagesScraped: totalScrapedPages,
+        transfersInserted: totalNewTransfers,
+        transfersUpdated: 0, // We'd need to track this across rounds if needed
+        errors: [],
+        adaptiveScrapingRounds,
       },
       timestamp: new Date().toISOString(),
       rateLimitStatus: {

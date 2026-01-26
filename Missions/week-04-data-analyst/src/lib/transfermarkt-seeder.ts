@@ -40,6 +40,7 @@ interface SeedingResult {
   transfersUpdated: number;
   errors: string[];
   duration: number;
+  allNewTransfers: boolean; // New field to indicate if all transfers were new
 }
 
 // ============================================================================
@@ -55,6 +56,7 @@ export async function seedTransfermarktData(
   const errors: string[] = [];
   let transfersInserted = 0;
   let transfersUpdated = 0;
+  let newTransferCount = 0;
 
   try {
     console.log(`🌱 Starting Transfermarkt data seeding for ${transfers.length} transfers...`);
@@ -86,6 +88,7 @@ export async function seedTransfermarktData(
         const result = await upsertTransfer(supabase, transfer);
         if (result.isNew) {
           transfersInserted++;
+          newTransferCount++;
         } else {
           transfersUpdated++;
         }
@@ -97,9 +100,14 @@ export async function seedTransfermarktData(
     }
 
     const duration = Date.now() - startTime;
+    const allNewTransfers = newTransferCount === processedTransfers.length && processedTransfers.length > 0;
     
     console.log(`✅ Seeding completed in ${duration}ms`);
     console.log(`📈 Results: ${transfersInserted} inserted, ${transfersUpdated} updated, ${errors.length} errors`);
+    console.log(`🆕 New transfers detected: ${newTransferCount}/${processedTransfers.length}`);
+    if (allNewTransfers) {
+      console.log(`🚨 ALL TRANSFERS ARE NEW - Consider scraping more pages!`);
+    }
 
     return {
       success: errors.length === 0,
@@ -107,7 +115,8 @@ export async function seedTransfermarktData(
       transfersInserted,
       transfersUpdated,
       errors,
-      duration
+      duration,
+      allNewTransfers
     };
 
   } catch (error) {
@@ -121,7 +130,8 @@ export async function seedTransfermarktData(
       transfersInserted: 0,
       transfersUpdated: 0,
       errors: [errorMsg],
-      duration
+      duration,
+      allNewTransfers: false
     };
   }
 }
